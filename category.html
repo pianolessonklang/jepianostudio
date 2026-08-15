@@ -143,102 +143,98 @@ if (catKey === 'all') {
 
   titleEl.textContent = cat.title;
 
-  const sources = []; // for lightbox (photos)
+ const sources = []; // for lightbox (photos)
 
-  if (cat.type === 'photos') {
-    // Photo loading: only add images that exist
-    for (let i = 1; i <= cat.count; i++) {
-      const src = `${base}${catKey}${i}${ext}`;
-      (function (src, i) {
+// helper to append a photo thumbnail and register it for the lightbox
+function addPhoto(src, alt, wrapper) {
+  const thumb = document.createElement('img');
+  thumb.src = src;
+  thumb.alt = alt;
+  const idx = sources.length;
+  sources.push(src);
+  thumb.dataset.index = idx;
+  thumb.addEventListener('click', () => openLB(Number(thumb.dataset.index)));
+  wrapper.appendChild(thumb);
+}
+
+// Render combined "all" view when ?cat=all
+if (catKey === 'all') {
+  titleEl.textContent = 'All Photos';
+  grid.innerHTML = '';
+
+  Object.keys(categories).forEach(k => {
+    const c = categories[k];
+    if (c.type !== 'photos') return; // skip non-photo categories
+
+    // Section heading
+    const section = document.createElement('div');
+    const heading = document.createElement('h3');
+    heading.textContent = c.title;
+    heading.style.fontFamily = '"Playfair Display", serif';
+    heading.style.margin = '18px 0 8px';
+    section.appendChild(heading);
+
+    // Image wrapper for this category
+    const wrapper = document.createElement('div');
+    wrapper.className = 'images-grid';
+    section.appendChild(wrapper);
+    grid.appendChild(section);
+
+    let foundAny = false;
+    for (let i = 1; i <= c.count; i++) {
+      (function(src, i){
         const tester = new Image();
         tester.onload = () => {
-          const thumb = document.createElement('img');
-          thumb.src = src;
-          thumb.alt = `${cat.title} ${i}`;
-          const idx = sources.length;
-          sources.push(src);
-          thumb.dataset.index = idx;
-          thumb.addEventListener('click', () => openLB(Number(thumb.dataset.index)));
-          grid.appendChild(thumb);
+          foundAny = true;
+          addPhoto(src, `${c.title} ${i}`, wrapper);
         };
-        tester.onerror = () => {
-          // skip missing
-        };
+        tester.onerror = () => { /* missing - skip */ };
         tester.src = src;
-      })(src, i);
+      })(`${base}${k}${i}${ext}`, i);
     }
 
-    // if none load show message after short delay
+    // If this category had no thumbnails, show message after a short delay
     setTimeout(() => {
-      if (!grid.querySelector('img')) {
-        grid.innerHTML = `<div class="no-image">No images found for ${cat.title}. Upload ${catKey}1${ext}, ${catKey}2${ext}, ... to the ${base} folder.</div>`;
+      if (!foundAny) {
+        const msg = document.createElement('div');
+        msg.className = 'no-image';
+        msg.textContent = `No images for ${c.title}. Upload images/${k}1${ext}`;
+        wrapper.appendChild(msg);
       }
-    }, 500);
-  }
-  else if (cat.type === 'video') {
-    // Video thumbnails; default behaviour: expect poster images in images/video1.jpg ...
-    // Clicking a poster will attempt to play videos/video1.mp4 (self-hosted) if present;
-    // if not present, we will look for a videos.json file to load external (YouTube) entries.
+    }, 600);
+  });
 
-    // first try self-hosted posters/mp4s
-    const posters = [];
-    for (let i = 1; i <= cat.count; i++) {
-      const poster = `${base}${catKey}${i}${ext}`;
-      (function (poster, i) {
-        const tester = new Image();
-        tester.onload = () => {
-          const thumb = document.createElement('img');
-          thumb.src = poster;
-          thumb.alt = `${cat.title} ${i}`;
-          thumb.dataset.index = i - 1;
-          // click -> try to open self-hosted mp4 at videos/video1.mp4
-          thumb.addEventListener('click', () => {
-            const mp4 = `${videoBase}${catKey}${i}.mp4`;
-            // try to open mp4 - browser will attempt; we show modal regardless and let it fail if not present
-            openVideoModal(mp4, poster);
-          });
-          grid.appendChild(thumb);
-          posters.push(poster);
-        };
-        tester.onerror = () => {
-          // skip missing poster
-        };
-        tester.src = poster;
-      })(poster, i);
+  // If no images were added at all, show a fallback message
+  setTimeout(() => {
+    if (!sources.length) {
+      grid.innerHTML = `<div class="no-image">No images found in any category. Upload images to the images/ folder.</div>`;
     }
+  }, 700);
 
-    // after a short delay, if no posters found try to load videos.json for external links
-    setTimeout(() => {
-      if (!grid.querySelector('img')) {
-        // attempt to fetch videos.json (optional)
-        fetch('videos.json').then(r=>r.json()).then(list=>{
-          if (!Array.isArray(list) || !list.length) {
-            grid.innerHTML = `<div class="no-image">No videos found. Upload poster images named ${catKey}1${ext} or create videos.json for external video links.</div>`;
-            return;
-          }
-          // render posters from list
-          list.forEach((v, idx) => {
-            const thumb = document.createElement('img');
-            thumb.src = v.poster || (v.thumb || 'images/video' + (idx+1) + ext);
-            thumb.alt = v.title || ('Video ' + (idx+1));
-            thumb.style.cursor = 'pointer';
-            thumb.addEventListener('click', () => {
-              // open YouTube embed if id provided
-              if (v.id && v.provider === 'youtube') {
-                openVideoEmbed(v.id);
-              } else if (v.url) {
-                openVideoEmbedUrl(v.url);
-              }
-            });
-            grid.appendChild(thumb);
-          });
-        }).catch(()=>{
-          grid.innerHTML = `<div class="no-image">No videos found. Upload poster images named ${catKey}1${ext} or create videos.json for external video links.</div>`;
-        });
-      }
-    }, 500);
+} else if (cat && cat.type === 'photos') {
+  // Per-category photo loading (keeps original behaviour)
+  for (let i = 1; i <= cat.count; i++) {
+    const src = `${base}${catKey}${i}${ext}`;
+    (function (src, i) {
+      const tester = new Image();
+      tester.onload = () => {
+        addPhoto(src, `${cat.title} ${i}`, grid);
+      };
+      tester.onerror = () => {
+        // skip missing
+      };
+      tester.src = src;
+    })(src, i);
   }
 
+  // if none load show message after short delay
+  setTimeout(() => {
+    if (!grid.querySelector('img')) {
+      grid.innerHTML = `<div class="no-image">No images found for ${cat.title}. Upload ${catKey}1${ext}, ${catKey}2${ext}, ... to the ${base} folder.</div>`;
+    }
+  }, 500);
+}
+  
   // Lightbox code (photos)
   const lb = document.getElementById('lightbox');
   const lbImg = document.getElementById('lightboxImg');
