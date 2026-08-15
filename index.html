@@ -180,7 +180,93 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 
 
 </div></div></section>
-  
+
+<!-- ====== Gallery overview (paste as a single block into index.html) ====== -->
+<style>
+/* Scoped gallery styles - applies to #home-gallery OR #gallery so nav anchors work */
+#home-gallery, #gallery { padding: 40px 0; }
+#home-gallery .container, #gallery .container { width: min(var(--max,1180px), calc(100% - 48px)); margin: 0 auto; }
+
+#home-gallery .section-heading .kicker, #gallery .section-heading .kicker { font-weight:700; text-transform:uppercase; color:var(--gold); font-size:.75rem; margin-bottom:6px; }
+#home-gallery .section-heading h2, #gallery .section-heading h2 { font-family:"Playfair Display",serif; margin:6px 0 18px; }
+
+/* Grid and cards */
+#gallery-grid { display:flex; gap:20px; flex-wrap:wrap; justify-content:flex-start; margin-top:18px; align-items:flex-start; }
+.category-card {
+  width:220px;
+  background:#fff;
+  padding:12px;
+  border-radius:10px;
+  box-shadow:0 8px 20px rgba(0,0,0,.06);
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.category-thumb {
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  border-radius:8px;
+  display:block;
+  margin-bottom:12px;
+  flex-shrink:0;
+}
+
+/* Title link below image */
+.category-title {
+  font-family:"Playfair Display",serif;
+  font-size:0.95rem;
+  color:var(--black);
+  text-decoration:none;
+  margin-bottom:10px;
+}
+
+/* "No thumbnail" text */
+.no-image { color:var(--grey); font-size:0.9rem; padding:14px 6px; }
+
+/* single centered button below the grid */
+.gallery-cta-wrap { text-align:center; margin-top:26px; }
+.view-more-all {
+  display:inline-block;
+  padding:12px 30px;
+  border:2px solid rgba(0,0,0,0.12);
+  background:transparent;
+  border-radius:8px;
+  font-weight:700;
+  letter-spacing:0.08em;
+  color:var(--black);
+  text-decoration:none;
+}
+.view-more-all:hover { transform:translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,.06); cursor:pointer; }
+
+/* Responsive */
+@media (max-width:820px) {
+  #gallery-grid { justify-content:center; gap:14px; }
+  .category-card { width:46%; max-width:260px; }
+}
+@media (max-width:520px) {
+  .category-card { width:100%; }
+  .category-thumb { height:180px; }
+}
+</style>
+
+<section id="gallery" aria-labelledby="home-gallery-title">
+  <div class="container">
+    <div class="section-heading">
+      <div class="kicker">Gallery</div>
+      <h2 id="home-gallery-title">Moments from our students' musical journey.</h2>
+    </div>
+
+    <div id="gallery-grid" aria-live="polite"></div>
+
+    <div class="gallery-cta-wrap">
+      <!-- Change the href to whichever category or page you prefer -->
+      <a id="allGalleryBtn" class="view-more-all" href="category.html?cat=recital">VIEW MORE PHOTOS</a>
+    </div>
+  </div>
+</section>
+    
 <script> /* Simple gallery builder — one card per category, uses images/<key>1.jpg as thumbnail */ (function () { const categories = [ { key: 'recital', title: 'Student Recitals', count: 5 }, { key: 'competition', title: 'Competition', count: 5 }, { key: 'exam', title: 'Examinations', count: 5 }, { key: 'performance', title: 'Piano & Music', count: 5 }, { key: 'students', title: 'Students', count: 5 } ]; const base = 'images/'; const ext = '.jpg'; const grid = document.getElementById('gallery-grid'); if (!grid) return; categories.forEach(cat => { const card = document.createElement('div'); card.className = 'category-card'; const href = `category.html?cat=${encodeURIComponent(cat.key)}`; // clickable image container const aImg = document.createElement('a'); aImg.href = href; aImg.setAttribute('aria-label', cat.title); // thumbnail (uses slot 1) const img = document.createElement('img'); img.className = 'category-thumb'; img.src = `${base}${cat.key}1${ext}`; // images/recital1.jpg etc. img.alt = cat.title + ' thumbnail'; img.loading = 'lazy'; // if thumbnail missing, remove image and show placeholder img.onerror = () => { if (img.parentNode) img.remove(); const placeholder = document.createElement('div'); placeholder.className = 'no-image'; placeholder.textContent = `No thumbnail — upload ${cat.key}1${ext}`; aImg.appendChild(placeholder); }; aImg.appendChild(img); card.appendChild(aImg); // title under the image const titleLink = document.createElement('a'); titleLink.href = href; titleLink.className = 'category-title'; titleLink.textContent = cat.title; card.appendChild(titleLink); grid.appendChild(card); }); })(); </script>
 
 <section id="reviews" class="reviews"><div class="container">
