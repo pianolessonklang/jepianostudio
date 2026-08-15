@@ -1,182 +1,3 @@
-/* ----------------- HOME GALLERY overview (category cards) ----------------- */
-.gallery-grid { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-top:22px; }
-.category-card {
-  width:220px;
-  background:#fff;
-  padding:14px;
-  border-radius:10px;
-  box-shadow:0 10px 22px rgba(0,0,0,.06);
-  text-align:center;
-}
-.category-thumb {
-  width:100%;
-  height:140px;
-  object-fit:cover;
-  border-radius:8px;
-  display:block;
-  margin-bottom:10px;
-}
-.category-title { font-family:"Playfair Display",serif; margin-bottom:8px; font-size:0.95rem; color:var(--black); display:block; text-decoration:none; }
-.no-image { color:var(--grey); font-size:0.9rem; padding:10px 0; }
-
-/* Single main button style (centered) */
-.view-more-all {
-  display:inline-block;
-  padding:12px 30px;
-  border:2px solid rgba(0,0,0,0.18);
-  background:transparent;
-  border-radius:8px;
-  font-weight:700;
-  letter-spacing:0.08em;
-  color:var(--black);
-  text-decoration:none;
-}
-.view-more-all:hover { transform:translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,.06); cursor:pointer; }
-</style>
-</head>
-<body>
-
-<header class="nav" id="nav">
-  <div class="container navrow">
-
-    <a href="#" class="brand">
-      <img src="images/logo.png" alt="JE Piano Studio logo" class="brand-logo">
-      <div class="brandtext">
-        <span class="brandname">J.E. Piano Studio</span>
-        <small>Piano Lessons · Klang</small>
-      </div>
-    </a>
-
-    <nav class="links">
-      <a href="#about">About</a>
-      <a href="#approach">Approach</a>
-      <a href="#lessons">Lessons</a>
-      <a href="#students">Students</a>
-      <a href="#gallery">Gallery</a>
-      <a href="#reviews">Reviews</a>
-      <a href="#contact">Contact</a>
-    </nav>
-
-  </div>
-</header>
-
-<main>
-
-  <!-- HERO (kept as-is from your original) -->
-  <section class="hero">
-    <div class="container heroContent">
-      <div class="eyebrow">Welcome</div>
-      <h1>J.E. Piano Studio</h1>
-      <p>Personalised piano lessons in Klang.</p>
-      <a class="btn gold" href="#contact">Book a lesson</a>
-    </div>
-  </section>
-
-  <!-- ABOUT (uses images/instructor.jpg — overwrite that file to change image) -->
-  <section id="about" class="aboutgrid">
-    <div class="container">
-      <div class="aboutphoto">
-        <!-- text inside aboutphoto -->
-        <div style="padding:28px; max-width:520px;">
-          <h2>About the Instructor</h2>
-          <p class="lead">Our instructor brings years of teaching experience and a passion for music.</p>
-        </div>
-      </div>
-
-      <div class="abouttext">
-        <div class="heading">
-          <h3>Teaching approach</h3>
-          <p>We focus on developing musicality, technique and confidence in every pupil.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- GALLERY OVERVIEW (one thumbnail per category + single VIEW MORE PHOTOS button) -->
-  <section id="gallery">
-    <div class="container">
-      <div class="section-heading">
-        <div class="kicker">Gallery</div>
-        <h2>Moments from our students' musical journey.</h2>
-        <!-- paragraph intentionally removed -->
-      </div>
-
-      <div id="gallery-grid" class="gallery-grid" aria-live="polite"></div>
-
-      <!-- single centered button (change href to open whichever page you prefer) -->
-      <div style="text-align:center; margin-top:26px;">
-        <!-- this button currently opens the recital category; change ?cat=recital to another key if desired -->
-        <a id="allGalleryBtn" class="view-more-all" href="category.html?cat=recital">VIEW MORE PHOTOS</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- (other sections of your page would continue here) -->
-
-</main>
-
-<script>
-/* BUILD HOMEPAGE CATEGORY CARDS
-   Expects images named: images/recital1.jpg, images/competition1.jpg, etc.
-   Clicking image or title opens category.html?cat=<key>
-*/
-(function () {
-  const categories = [
-    { key: 'recital', title: 'Student Recitals', count: 5 },
-    { key: 'competition', title: 'Competition', count: 5 },
-    { key: 'exam', title: 'Examinations', count: 5 },
-    { key: 'performance', title: 'Piano & Music', count: 5 },
-    { key: 'students', title: 'Students', count: 5 }
-  ];
-
-  const base = 'images/';
-  const ext = '.jpg';
-  const grid = document.getElementById('gallery-grid');
-
-  if (!grid) return;
-
-  categories.forEach(cat => {
-    const card = document.createElement('div');
-    card.className = 'category-card';
-
-    const href = `category.html?cat=${encodeURIComponent(cat.key)}`;
-
-    const aImg = document.createElement('a');
-    aImg.href = href;
-
-    const img = document.createElement('img');
-    img.className = 'category-thumb';
-    img.src = `${base}${cat.key}1${ext}`;
-    img.alt = cat.title + ' thumbnail';
-    img.loading = 'lazy';
-
-    img.onerror = () => {
-      if (img.parentNode) img.remove();
-      const placeholder = document.createElement('div');
-      placeholder.className = 'no-image';
-      placeholder.textContent = `No thumbnail — upload ${cat.key}1${ext}`;
-      aImg.appendChild(placeholder);
-    };
-
-    aImg.appendChild(img);
-    card.appendChild(aImg);
-
-    const titleLink = document.createElement('a');
-    titleLink.href = href;
-    titleLink.className = 'category-title';
-    titleLink.textContent = cat.title;
-    card.appendChild(titleLink);
-
-    grid.appendChild(card);
-  });
-})();
-</script>
-
-</body>
-</html>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -225,32 +46,7 @@
     letter-spacing: .08em;
 }
     
-section{padding:110px 0}.aboutgrid{display:grid;grid-template-columns:.85fr 1.15fr;gap:95px;align-items:center}
-
-/* ABOUT PHOTO — uses a replaceable file in images/ named instructor.jpg */
-.aboutphoto {
-  min-height: 560px;
-  /* dark gradient on top of the image for text contrast */
-  background:
-    linear-gradient(90deg, rgba(13,12,10,.9), rgba(13,12,10,.42)),
-    url("images/instructor.jpg") center/cover no-repeat;
-  color: #fff;
-  display:flex;
-  align-items:flex-end;
-}
-
-/* Logo size and alignment */
-.brand-logo {
-  width: 44px;
-  height: 44px;
-  object-fit: contain;
-  border-radius: 6px; /* optional */
-  display: inline-block;
-}
-.brand { display:flex; align-items:center; gap:10px; }
-
-/* About and other styles */
-.abouttext p{margin-bottom:16px}.lead{font-size:1.1rem;color:#45413b}.quote{margin-top:28px;padding:22px 0 22px 23px;border-left:2px solid var(--gold);font-family:"Playfair Display",serif;font-size:1.25rem;color:#39362f}
+section{padding:110px 0}.aboutgrid{display:grid;grid-template-columns:.85fr 1.15fr;gap:95px;align-items:center}.aboutphoto{min-height:560px;background:url("https://images.unsplash.com/photo-1552422535-c45813c61732?auto=format&fit=crop&w=1100&q=90") center/cover}.abouttext p{margin-bottom:16px}.lead{font-size:1.1rem;color:#45413b}.quote{margin-top:28px;padding:22px 0 22px 23px;border-left:2px solid var(--gold);font-family:"Playfair Display",serif;font-size:1.25rem;color:#39362f}
 .white{background:#fff}.heading{max-width:720px;margin-bottom:50px}.featuregrid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line)}.feature{padding:35px;min-height:220px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transition:.25s}.feature:hover{background:#fbf9f5}.feature:nth-child(3n){border-right:0}.feature:nth-last-child(-n+3){border-bottom:0}.num{color:var(--gold);font-size:.7rem;font-weight:700}.feature h3{margin:12px 0 9px}.feature p{font-size:.86rem}
 .approach{background:var(--cream2)}.approachgrid{display:grid;grid-template-columns:.8fr 1.2fr;gap:80px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.card{background:rgba(255,255,255,.55);border:1px solid var(--line);padding:25px;transition:.25s}.card:hover{background:#fff;transform:translateY(-3px)}.card h3{font-size:1.1rem;margin-bottom:7px}.card p{font-size:.82rem}
 .courses{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.course{border:1px solid var(--line);padding:38px;min-height:405px;display:flex;flex-direction:column;background:var(--cream);transition:.3s}.course:hover{transform:translateY(-6px);box-shadow:0 18px 45px rgba(0,0,0,.08)}.tag{color:var(--gold);font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.course h3{font-size:1.65rem;margin:18px 0 14px}.course p{font-size:.86rem;margin-bottom:12px}.for{margin-top:auto;border-top:1px solid var(--line);padding-top:18px;font-size:.74rem;color:var(--black)}
@@ -262,8 +58,16 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 .reveal{opacity:0;transform:translateY(22px);transition:.75s}.reveal.show{opacity:1;transform:none}
 @media(max-width:900px){.container{width:calc(100% - 32px)}.links{display:none}.menu{display:block}.hero{min-height:730px}.heroContent{padding:160px 0 75px}.statsgrid{grid-template-columns:1fr}.stat{border:0;border-bottom:1px solid #484640;padding:12px}.stat:last-child{border:0}section{padding:78px 0}.aboutgrid,.approachgrid,.contactgrid{grid-template-columns:1fr;gap:35px}.aboutphoto{min-height:420px}.featuregrid{grid-template-columns:1fr}.feature{border-right:0!important;border-bottom:1px solid var(--line)!important}.feature:last-child{border-bottom:0!important}.courses{grid-template-columns:1fr}.course{min-height:350px}.journey{grid-template-columns:repeat(2,1fr)}.gallery{grid-template-columns:1fr;grid-auto-rows:auto;gap:16px}.gitem,.gitem.big{grid-row:auto;height:auto;min-height:270px}.gitem img{height:270px}.caption{padding-top:45px}.reviewgrid{grid-template-columns:1fr}.contactbox,.mapbox{padding:30px}.mapbox{min-height:380px}.maparea{min-height:300px}.foot{flex-direction:column;align-items:flex-start}}
 @media(max-width:520px){h1{font-size:3.15rem;letter-spacing:-1.5px}.hero{min-height:690px}.hero p{font-size:.98rem}.btn{width:100%}.cards{grid-template-columns:1fr}.journey{grid-template-columns:1fr}.gitem,.gitem.big{min-height:0}.gitem img{height:250px}.contactbox h2{font-size:2.4rem}}
+</style>
+</head>
+<body>
 
-
+<header class="nav" id="nav">
+<div class="container navrow">
+<a href="#" class="brand">
+<span class="brandmark">J.E.</span>
+<span class="brandtext">J.E. Piano Studio<small>Piano Lessons · Klang</small></span>
+</a>
 <nav class="links">
 <a href="#about">About</a><a href="#approach">Approach</a><a href="#courses">Lessons</a><a href="#journey">Students</a><a href="#gallery">Gallery</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a>
 </nav>
@@ -354,35 +158,12 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 <section id="journey" class="dark"><div class="container">
 <div class="heading reveal"><div class="kicker">Student Journey</div><h2>Every achievement matters.</h2><p>From the first lesson to the concert stage, every student has a different journey.</p></div>
 <div class="journey reveal">
-<div class="journeyitem"><div class="journeyicon">★</div><h3>Personal Milestones</h3><p>Confidence, progress and musical growth</p></div>
-<div class="journeyitem"><div class="journeyicon">♫</div><h3>Performances</h3><p>Recitals · Festivals · Public Performances</p></div>
 <div class="journeyitem"><div class="journeyicon">♪</div><h3>Examinations</h3><p>ABRSM · Trinity</p></div>
 <div class="journeyitem"><div class="journeyicon">♛</div><h3>Competitions</h3><p>Local & International Competitions</p></div>
+<div class="journeyitem"><div class="journeyicon">♫</div><h3>Performances</h3><p>Recitals · Festivals · Public Performances</p></div>
+<div class="journeyitem"><div class="journeyicon">★</div><h3>Personal Milestones</h3><p>Confidence, progress and musical growth</p></div>
 </div></div></section>
   
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gallery — Overview</title>
-<style>
-  :root{--cream:#f7f4ee;--black:#1d1c19;--grey:#6e6a63;--gold:#ae8751;--max:1180px}
-  body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--black);margin:0}
-  .container{width:min(var(--max),calc(100% - 48px));margin:32px auto}
-  .section-heading .kicker{font-weight:700;text-transform:uppercase;color:var(--gold);font-size:.75rem}
-  .section-heading h2{font-family:"Playfair Display",serif;margin:8px 0 18px}
-  .gallery-grid { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
-  .gallery-column { flex:1 1 180px; min-width:160px; text-align:center; background:#fff; padding:14px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,.06) }
-  .gallery-thumb { display:block; width:100%; height:140px; object-fit:cover; border-radius:6px; margin:0 auto 10px; }
-  .gallery-column h3 { margin:0 0 8px; font-size:1rem; }
-  .category-link { color:inherit; text-decoration:none; }
-  .view-more-btn { display:inline-block; margin-top:6px; padding:8px 12px; border:1px solid #ccc; border-radius:6px; background:transparent; color:var(--black); text-decoration:none; font-size:.9rem; }
-  .no-image { color:var(--grey); font-size:.9rem; padding:6px 0; }
-</style>
-</head>
-<body>
-
 <section id="gallery">
   <div class="container">
     <div class="section-heading">
@@ -391,12 +172,21 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       <!-- paragraph removed as requested -->
     </div>
 
-    <div id="gallery-grid" class="gallery-grid" aria-live="polite"></div>
+    <div id="gallery-grid" class="gallery-grid"></div>
   </div>
 </section>
 
+<style>
+  .gallery-grid { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+  .gallery-column { flex:1 1 180px; min-width:160px; text-align:center; }
+  .gallery-column h3 { margin:8px 0 12px; font-size:1rem; cursor:pointer; color:inherit; text-decoration:none; }
+  .gallery-thumb { display:block; width:100%; height:140px; object-fit:cover; border-radius:6px; margin:0 auto; }
+  .no-image { color:#666; font-size:0.9rem; padding:6px 0; }
+  a.category-link { color:inherit; text-decoration:none; }
+</style>
+
 <script>
-  // CONFIG: edit counts or categories if needed
+  // Configure categories and how many images each category has
   const categories = [
     { key: 'recital', title: 'Student Recitals', count: 5 },
     { key: 'competition', title: 'Competition', count: 5 },
@@ -405,8 +195,8 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     { key: 'students', title: 'Students', count: 5 }
   ];
 
-  const base = 'images/'; // relative folder where files live
-  const ext = '.jpg';     // use .png if your files are png
+  const base = 'images/'; // folder where files live
+  const ext = '.jpg';     // change to .png if needed
 
   const grid = document.getElementById('gallery-grid');
 
@@ -414,99 +204,64 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     const col = document.createElement('div');
     col.className = 'gallery-column';
 
-    // clickable thumbnail (links to category.html?cat=...)
-    const linkHref = `category.html?cat=${encodeURIComponent(cat.key)}`;
+    // Link target: category.html?cat=recital
     const link = document.createElement('a');
-    link.href = linkHref;
     link.className = 'category-link';
-    link.setAttribute('aria-label', `${cat.title} — open category`);
+    link.href = `category.html?cat=${encodeURIComponent(cat.key)}`;
 
+    // Thumbnail image: use the first file (e.g., images/recital1.jpg)
     const img = document.createElement('img');
     img.className = 'gallery-thumb';
     img.loading = 'lazy';
+    img.src = `${base}${cat.key}1${ext}`;
     img.alt = `${cat.title} thumbnail`;
-    img.src = `${base}${cat.key}1${ext}`; // e.g. images/recital1.jpg
 
-    // if thumbnail missing, remove image and show placeholder text
+    // If the thumbnail is missing, show a placeholder text instead
     img.onerror = () => {
-      if (img.parentNode) img.remove();
+      img.remove();
       const placeholder = document.createElement('div');
       placeholder.className = 'no-image';
-      placeholder.textContent = `No thumbnail — upload ${cat.key}1${ext}`;
+      placeholder.textContent = 'No thumbnail — upload ' + `${cat.key}1${ext}`;
+      // place placeholder inside the link so clicking still navigates
       link.appendChild(placeholder);
     };
 
     link.appendChild(img);
 
+    // Category title clickable — points to same category page
     const title = document.createElement('h3');
     const titleLink = document.createElement('a');
-    titleLink.href = linkHref;
+    titleLink.href = link.href;
     titleLink.className = 'category-link';
     titleLink.textContent = cat.title;
     title.appendChild(titleLink);
 
-    const viewMore = document.createElement('a');
-    viewMore.href = linkHref;
-    viewMore.className = 'view-more-btn';
-    viewMore.textContent = 'View more photos';
-
     col.appendChild(link);
     col.appendChild(title);
-    col.appendChild(viewMore);
     grid.appendChild(col);
   });
 </script>
 
-</body>
-</html>
-
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gallery — Category</title>
-<style>
-  :root{--cream:#f7f4ee;--black:#1d1c19;--grey:#6e6a63;--max:1180px}
-  body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--black);margin:0}
-  .container{width:min(var(--max),calc(100% - 48px));margin:32px auto}
-  .section-heading .kicker{font-weight:700;text-transform:uppercase;color:#ae8751;font-size:.75rem}
-  .section-heading h2{font-family:"Playfair Display",serif;margin:8px 0 8px}
-  .back-link { display:inline-block; margin-top:6px; text-decoration:none; color:inherit; border:1px solid #ccc; padding:8px 10px; border-radius:6px; background:#fff }
-  .images-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-top:16px; }
-  .images-grid img { width:100%; height:160px; object-fit:cover; border-radius:6px; display:block; cursor:pointer; }
-  .no-image { color:var(--grey); font-size:1rem; padding:16px; background:#fff; border-radius:8px }
-  /* Lightbox */
-  #lightbox { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.85); z-index:9999; }
-  #lightbox img { max-width:92%; max-height:86%; border-radius:6px; display:block; }
-  .lb-btn { position:fixed; top:50%; transform:translateY(-50%); font-size:36px; color:#fff; background:transparent; border:0; cursor:pointer; padding:10px 14px; opacity:.9 }
-  #lbPrev { left:22px } #lbNext { right:22px } #lbClose { top:18px; right:18px; transform:none; font-size:28px }
-</style>
-</head>
-<body>
-
-<section id="category-gallery">
+  <section id="category-gallery">
   <div class="container">
     <div id="category-heading" class="section-heading">
       <div class="kicker">Gallery</div>
-      <h2 id="category-title">Category</h2>
-      <div id="category-info"><a class="back-link" href="gallery.html">← Back to gallery</a></div>
+      <h2 id="category-title"></h2>
+      <p id="category-info"></p>
     </div>
 
-    <div id="images-grid" class="images-grid" aria-live="polite"></div>
+    <div id="images-grid" class="images-grid"></div>
   </div>
 </section>
 
-<!-- Lightbox overlay -->
-<div id="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
-  <button id="lbClose" class="lb-btn" aria-label="Close">✕</button>
-  <button id="lbPrev" class="lb-btn" aria-label="Previous">❮</button>
-  <img id="lightboxImg" src="" alt="">
-  <button id="lbNext" class="lb-btn" aria-label="Next">❯</button>
-</div>
+<style>
+  .images-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-top:12px; }
+  .images-grid img { width:100%; height:160px; object-fit:cover; border-radius:6px; display:block; }
+  .back-link { display:inline-block; margin-top:8px; }
+</style>
 
 <script>
-  // CONFIG: match counts here with gallery.html
+  // Same category config as gallery.html — keep consistent counts
   const categories = {
     recital: { title: 'Student Recitals', count: 5 },
     competition: { title: 'Competition', count: 5 },
@@ -518,7 +273,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
   const base = 'images/';
   const ext = '.jpg';
 
-  // parse ?cat=recital
+  // get ?cat=recital from URL
   const params = new URLSearchParams(location.search);
   const catKey = params.get('cat') || '';
   const cat = categories[catKey];
@@ -529,95 +284,32 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 
   if (!cat) {
     titleEl.textContent = 'Category not found';
-    grid.innerHTML = `<div class="no-image">Category not found. Return to the <a href="gallery.html">main gallery</a>.</div>`;
+    infoEl.textContent = 'Return to the main gallery.';
   } else {
     titleEl.textContent = cat.title;
-    // load images but only add those that actually exist
-    const sources = []; // successful image urls for lightbox
+    infoEl.innerHTML = `<a class="back-link" href="gallery.html">← Back to gallery</a>`;
+
+    // load images catKey1.jpg ... catKeyN.jpg
+    let any = false;
     for (let i = 1; i <= cat.count; i++) {
       const src = `${base}${catKey}${i}${ext}`;
-      // use Image() to test availability before adding to DOM
-      const tester = new Image();
-      tester.onload = () => {
-        const thumb = document.createElement('img');
-        const idx = sources.length;
-        sources.push(src);
-        thumb.src = src;
-        thumb.alt = `${cat.title} ${i}`;
-        thumb.dataset.index = idx;
-        // open lightbox with the correct index
-        thumb.addEventListener('click', () => openLB(Number(thumb.dataset.index)));
-        grid.appendChild(thumb);
-      };
-      tester.onerror = () => {
-        // skip missing images silently
-      };
-      tester.src = src;
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.src = src;
+      img.alt = `${cat.title} ${i}`;
+      img.onerror = () => img.remove();
+      img.onload = () => { any = true; };
+      grid.appendChild(img);
     }
 
-    // after a short delay, show message if no images loaded
+    // small timeout to show a message if nothing loaded
     setTimeout(() => {
       if (!grid.querySelector('img')) {
-        grid.innerHTML = `<div class="no-image">No images found for ${cat.title}. Upload ${catKey}1${ext}, ${catKey}2${ext}, ... to the ${base} folder.</div>`;
+        grid.innerHTML = `<div class="no-image">No images found for ${cat.title}. Upload ${catKey}1${ext}, ${catKey}2${ext}, ... to the images/ folder.</div>`;
       }
-    }, 500);
-
-    // LIGHTBOX behavior
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lightboxImg');
-    const lbClose = document.getElementById('lbClose');
-    const lbPrev = document.getElementById('lbPrev');
-    const lbNext = document.getElementById('lbNext');
-    let currentIndex = 0;
-
-    function openLB(index) {
-      if (!sources.length) return;
-      currentIndex = index;
-      lbImg.src = sources[currentIndex];
-      lb.setAttribute('aria-hidden','false');
-      lb.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-    function closeLB() {
-      lb.style.display = 'none';
-      lb.setAttribute('aria-hidden','true');
-      lbImg.src = '';
-      document.body.style.overflow = '';
-    }
-    function showPrev() {
-      if (!sources.length) return;
-      currentIndex = (currentIndex - 1 + sources.length) % sources.length;
-      lbImg.src = sources[currentIndex];
-    }
-    function showNext() {
-      if (!sources.length) return;
-      currentIndex = (currentIndex + 1) % sources.length;
-      lbImg.src = sources[currentIndex];
-    }
-
-    lbClose.addEventListener('click', closeLB);
-    lbPrev.addEventListener('click', showPrev);
-    lbNext.addEventListener('click', showNext);
-    // keyboard support
-    document.addEventListener('keydown', (e) => {
-      if (lb.style.display === 'flex') {
-        if (e.key === 'Escape') closeLB();
-        if (e.key === 'ArrowLeft') showPrev();
-        if (e.key === 'ArrowRight') showNext();
-      }
-    });
-    // click backdrop closes
-    lb.addEventListener('click', (e) => {
-      if (e.target === lb) closeLB();
-    });
-
-    // Expose openLB globally so thumbnails created earlier can call it
-    window.openLB = openLB;
+    }, 400);
   }
 </script>
-
-</body>
-</html>
 
 <section id="reviews" class="reviews"><div class="container">
 <div class="heading reveal"><div class="kicker">Reviews</div><h2>What students & parents say.</h2></div>
