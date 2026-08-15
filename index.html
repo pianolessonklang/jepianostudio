@@ -178,11 +178,34 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 <div class="heading reveal"><div class="kicker">Student Journey</div><h2>Every achievement matters.</h2><p>From the first lesson to the concert stage, every student has a different journey.</p></div>
 <div class="journey reveal">
 <div class="journeyitem"><div class="journeyicon">★</div><h3>Personal Milestones</h3><p>Confidence, progress and musical growth</p></div>
-<div class="journeyitem"><div class="journeyicon">♪</div><h3>Examinations</h3><p>ABRSM · Trinity</p></div>
 <div class="journeyitem"><div class="journeyicon">♫</div><h3>Performances</h3><p>Recitals · Festivals · Public Performances</p></div>
+<div class="journeyitem"><div class="journeyicon">♪</div><h3>Examinations</h3><p>ABRSM · Trinity</p></div>
 <div class="journeyitem"><div class="journeyicon">♛</div><h3>Competitions</h3><p>Local & International Competitions</p></div>
 </div></div></section>
   
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Gallery — Overview</title>
+<style>
+  :root{--cream:#f7f4ee;--black:#1d1c19;--grey:#6e6a63;--gold:#ae8751;--max:1180px}
+  body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--black);margin:0}
+  .container{width:min(var(--max),calc(100% - 48px));margin:32px auto}
+  .section-heading .kicker{font-weight:700;text-transform:uppercase;color:var(--gold);font-size:.75rem}
+  .section-heading h2{font-family:"Playfair Display",serif;margin:8px 0 18px}
+  .gallery-grid { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+  .gallery-column { flex:1 1 180px; min-width:160px; text-align:center; background:#fff; padding:14px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,.06) }
+  .gallery-thumb { display:block; width:100%; height:140px; object-fit:cover; border-radius:6px; margin:0 auto 10px; }
+  .gallery-column h3 { margin:0 0 8px; font-size:1rem; }
+  .category-link { color:inherit; text-decoration:none; }
+  .view-more-btn { display:inline-block; margin-top:6px; padding:8px 12px; border:1px solid #ccc; border-radius:6px; background:transparent; color:var(--black); text-decoration:none; font-size:.9rem; }
+  .no-image { color:var(--grey); font-size:.9rem; padding:6px 0; }
+</style>
+</head>
+<body>
+
 <section id="gallery">
   <div class="container">
     <div class="section-heading">
@@ -191,32 +214,12 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       <!-- paragraph removed as requested -->
     </div>
 
-    <div id="gallery-grid" class="gallery-grid"></div>
+    <div id="gallery-grid" class="gallery-grid" aria-live="polite"></div>
   </div>
 </section>
 
-function openLB(src) {
-  const lb = document.getElementById('lightbox');
-  document.getElementById('lightboxImg').src = src;
-  lb.style.display = 'grid';
-}
-function closeLB() { document.getElementById('lightbox').style.display = 'none'; }
-
-// when creating each img element on category page:
-img.onclick = () => openLB(img.src);
-img.style.cursor = 'pointer';
-    
-<style>
-  .gallery-grid { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
-  .gallery-column { flex:1 1 180px; min-width:160px; text-align:center; }
-  .gallery-column h3 { margin:8px 0 12px; font-size:1rem; cursor:pointer; color:inherit; text-decoration:none; }
-  .gallery-thumb { display:block; width:100%; height:140px; object-fit:cover; border-radius:6px; margin:0 auto; }
-  .no-image { color:#666; font-size:0.9rem; padding:6px 0; }
-  a.category-link { color:inherit; text-decoration:none; }
-</style>
-
 <script>
-  // Configure categories and how many images each category has
+  // CONFIG: edit counts or categories if needed
   const categories = [
     { key: 'recital', title: 'Student Recitals', count: 5 },
     { key: 'competition', title: 'Competition', count: 5 },
@@ -225,8 +228,8 @@ img.style.cursor = 'pointer';
     { key: 'students', title: 'Students', count: 5 }
   ];
 
-  const base = 'images/'; // folder where files live
-  const ext = '.jpg';     // change to .png if needed
+  const base = 'images/'; // relative folder where files live
+  const ext = '.jpg';     // use .png if your files are png
 
   const grid = document.getElementById('gallery-grid');
 
@@ -234,64 +237,99 @@ img.style.cursor = 'pointer';
     const col = document.createElement('div');
     col.className = 'gallery-column';
 
-    // Link target: category.html?cat=recital
+    // clickable thumbnail (links to category.html?cat=...)
+    const linkHref = `category.html?cat=${encodeURIComponent(cat.key)}`;
     const link = document.createElement('a');
+    link.href = linkHref;
     link.className = 'category-link';
-    link.href = `category.html?cat=${encodeURIComponent(cat.key)}`;
+    link.setAttribute('aria-label', `${cat.title} — open category`);
 
-    // Thumbnail image: use the first file (e.g., images/recital1.jpg)
     const img = document.createElement('img');
     img.className = 'gallery-thumb';
     img.loading = 'lazy';
-    img.src = `${base}${cat.key}1${ext}`;
     img.alt = `${cat.title} thumbnail`;
+    img.src = `${base}${cat.key}1${ext}`; // e.g. images/recital1.jpg
 
-    // If the thumbnail is missing, show a placeholder text instead
+    // if thumbnail missing, remove image and show placeholder text
     img.onerror = () => {
-      img.remove();
+      if (img.parentNode) img.remove();
       const placeholder = document.createElement('div');
       placeholder.className = 'no-image';
-      placeholder.textContent = 'No thumbnail — upload ' + `${cat.key}1${ext}`;
-      // place placeholder inside the link so clicking still navigates
+      placeholder.textContent = `No thumbnail — upload ${cat.key}1${ext}`;
       link.appendChild(placeholder);
     };
 
     link.appendChild(img);
 
-    // Category title clickable — points to same category page
     const title = document.createElement('h3');
     const titleLink = document.createElement('a');
-    titleLink.href = link.href;
+    titleLink.href = linkHref;
     titleLink.className = 'category-link';
     titleLink.textContent = cat.title;
     title.appendChild(titleLink);
 
+    const viewMore = document.createElement('a');
+    viewMore.href = linkHref;
+    viewMore.className = 'view-more-btn';
+    viewMore.textContent = 'View more photos';
+
     col.appendChild(link);
     col.appendChild(title);
+    col.appendChild(viewMore);
     grid.appendChild(col);
   });
 </script>
 
-  <section id="category-gallery">
+</body>
+</html>
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Gallery — Category</title>
+<style>
+  :root{--cream:#f7f4ee;--black:#1d1c19;--grey:#6e6a63;--max:1180px}
+  body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--black);margin:0}
+  .container{width:min(var(--max),calc(100% - 48px));margin:32px auto}
+  .section-heading .kicker{font-weight:700;text-transform:uppercase;color:#ae8751;font-size:.75rem}
+  .section-heading h2{font-family:"Playfair Display",serif;margin:8px 0 8px}
+  .back-link { display:inline-block; margin-top:6px; text-decoration:none; color:inherit; border:1px solid #ccc; padding:8px 10px; border-radius:6px; background:#fff }
+  .images-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-top:16px; }
+  .images-grid img { width:100%; height:160px; object-fit:cover; border-radius:6px; display:block; cursor:pointer; }
+  .no-image { color:var(--grey); font-size:1rem; padding:16px; background:#fff; border-radius:8px }
+  /* Lightbox */
+  #lightbox { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.85); z-index:9999; }
+  #lightbox img { max-width:92%; max-height:86%; border-radius:6px; display:block; }
+  .lb-btn { position:fixed; top:50%; transform:translateY(-50%); font-size:36px; color:#fff; background:transparent; border:0; cursor:pointer; padding:10px 14px; opacity:.9 }
+  #lbPrev { left:22px } #lbNext { right:22px } #lbClose { top:18px; right:18px; transform:none; font-size:28px }
+</style>
+</head>
+<body>
+
+<section id="category-gallery">
   <div class="container">
     <div id="category-heading" class="section-heading">
       <div class="kicker">Gallery</div>
-      <h2 id="category-title"></h2>
-      <p id="category-info"></p>
+      <h2 id="category-title">Category</h2>
+      <div id="category-info"><a class="back-link" href="gallery.html">← Back to gallery</a></div>
     </div>
 
-    <div id="images-grid" class="images-grid"></div>
+    <div id="images-grid" class="images-grid" aria-live="polite"></div>
   </div>
 </section>
 
-<style>
-  .images-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-top:12px; }
-  .images-grid img { width:100%; height:160px; object-fit:cover; border-radius:6px; display:block; }
-  .back-link { display:inline-block; margin-top:8px; }
-</style>
+<!-- Lightbox overlay -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+  <button id="lbClose" class="lb-btn" aria-label="Close">✕</button>
+  <button id="lbPrev" class="lb-btn" aria-label="Previous">❮</button>
+  <img id="lightboxImg" src="" alt="">
+  <button id="lbNext" class="lb-btn" aria-label="Next">❯</button>
+</div>
 
 <script>
-  // Same category config as gallery.html — keep consistent counts
+  // CONFIG: match counts here with gallery.html
   const categories = {
     recital: { title: 'Student Recitals', count: 5 },
     competition: { title: 'Competition', count: 5 },
@@ -303,7 +341,7 @@ img.style.cursor = 'pointer';
   const base = 'images/';
   const ext = '.jpg';
 
-  // get ?cat=recital from URL
+  // parse ?cat=recital
   const params = new URLSearchParams(location.search);
   const catKey = params.get('cat') || '';
   const cat = categories[catKey];
@@ -314,32 +352,95 @@ img.style.cursor = 'pointer';
 
   if (!cat) {
     titleEl.textContent = 'Category not found';
-    infoEl.textContent = 'Return to the main gallery.';
+    grid.innerHTML = `<div class="no-image">Category not found. Return to the <a href="gallery.html">main gallery</a>.</div>`;
   } else {
     titleEl.textContent = cat.title;
-    infoEl.innerHTML = `<a class="back-link" href="gallery.html">← Back to gallery</a>`;
-
-    // load images catKey1.jpg ... catKeyN.jpg
-    let any = false;
+    // load images but only add those that actually exist
+    const sources = []; // successful image urls for lightbox
     for (let i = 1; i <= cat.count; i++) {
       const src = `${base}${catKey}${i}${ext}`;
-      const img = document.createElement('img');
-      img.loading = 'lazy';
-      img.src = src;
-      img.alt = `${cat.title} ${i}`;
-      img.onerror = () => img.remove();
-      img.onload = () => { any = true; };
-      grid.appendChild(img);
+      // use Image() to test availability before adding to DOM
+      const tester = new Image();
+      tester.onload = () => {
+        const thumb = document.createElement('img');
+        const idx = sources.length;
+        sources.push(src);
+        thumb.src = src;
+        thumb.alt = `${cat.title} ${i}`;
+        thumb.dataset.index = idx;
+        // open lightbox with the correct index
+        thumb.addEventListener('click', () => openLB(Number(thumb.dataset.index)));
+        grid.appendChild(thumb);
+      };
+      tester.onerror = () => {
+        // skip missing images silently
+      };
+      tester.src = src;
     }
 
-    // small timeout to show a message if nothing loaded
+    // after a short delay, show message if no images loaded
     setTimeout(() => {
       if (!grid.querySelector('img')) {
-        grid.innerHTML = `<div class="no-image">No images found for ${cat.title}. Upload ${catKey}1${ext}, ${catKey}2${ext}, ... to the images/ folder.</div>`;
+        grid.innerHTML = `<div class="no-image">No images found for ${cat.title}. Upload ${catKey}1${ext}, ${catKey}2${ext}, ... to the ${base} folder.</div>`;
       }
-    }, 400);
+    }, 500);
+
+    // LIGHTBOX behavior
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    const lbClose = document.getElementById('lbClose');
+    const lbPrev = document.getElementById('lbPrev');
+    const lbNext = document.getElementById('lbNext');
+    let currentIndex = 0;
+
+    function openLB(index) {
+      if (!sources.length) return;
+      currentIndex = index;
+      lbImg.src = sources[currentIndex];
+      lb.setAttribute('aria-hidden','false');
+      lb.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLB() {
+      lb.style.display = 'none';
+      lb.setAttribute('aria-hidden','true');
+      lbImg.src = '';
+      document.body.style.overflow = '';
+    }
+    function showPrev() {
+      if (!sources.length) return;
+      currentIndex = (currentIndex - 1 + sources.length) % sources.length;
+      lbImg.src = sources[currentIndex];
+    }
+    function showNext() {
+      if (!sources.length) return;
+      currentIndex = (currentIndex + 1) % sources.length;
+      lbImg.src = sources[currentIndex];
+    }
+
+    lbClose.addEventListener('click', closeLB);
+    lbPrev.addEventListener('click', showPrev);
+    lbNext.addEventListener('click', showNext);
+    // keyboard support
+    document.addEventListener('keydown', (e) => {
+      if (lb.style.display === 'flex') {
+        if (e.key === 'Escape') closeLB();
+        if (e.key === 'ArrowLeft') showPrev();
+        if (e.key === 'ArrowRight') showNext();
+      }
+    });
+    // click backdrop closes
+    lb.addEventListener('click', (e) => {
+      if (e.target === lb) closeLB();
+    });
+
+    // Expose openLB globally so thumbnails created earlier can call it
+    window.openLB = openLB;
   }
 </script>
+
+</body>
+</html>
 
 <section id="reviews" class="reviews"><div class="container">
 <div class="heading reveal"><div class="kicker">Reviews</div><h2>What students & parents say.</h2></div>
