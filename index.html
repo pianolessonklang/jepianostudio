@@ -55,11 +55,30 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 </div>
 </section>
 
-<section class="stats"><div class="container statsgird">
-<div class="stat"><strong>20+ Years</strong><span>Teaching Experience</span></div>
-<div class="stat"><strong>300+ Students</strong><span>Students Taught</span></div>
-<div class="stat"><strong>Ages 5–60+</strong><span>Different Learners</span></div>
-</div></section>
+<!-- ================= STATS ================= -->
+
+<section class="stats">
+
+    <div class="container stats-grid">
+
+        <div class="stat">
+            <strong>20+ Years</strong>
+            <span>Teaching Experience</span>
+        </div>
+
+        <div class="stat">
+            <strong>300+ Students</strong>
+            <span>Students Taught</span>
+        </div>
+
+        <div class="stat">
+            <strong>Ages 5–60+</strong>
+            <span>Different Learners</span>
+        </div>
+
+    </div>
+
+</section>
 
 <section id="about"><div class="container aboutgrid reveal">
 <div class="aboutphoto"></div>
@@ -116,7 +135,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     <div class="section-heading">
       <div class="kicker">Gallery</div>
       <h2>Moments from our students' musical journey.</h2>
-      <p>Replace files in the images/ folder using names like recital1.jpg, competition1.jpg, exam1.jpg, etc.</p>
+      <!-- paragraph removed as requested -->
     </div>
 
     <div id="gallery-grid" class="gallery-grid"></div>
@@ -125,14 +144,15 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 
 <style>
   .gallery-grid { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
-  .gallery-column { flex:1 1 180px; min-width:160px; }
-  .gallery-column h3 { margin:0 0 8px; font-size:1rem; }
-  .gallery-thumb { display:block; width:100%; height:auto; margin-bottom:8px; object-fit:cover; border-radius:4px; }
-  .no-image { color:#666; font-size:0.9rem; padding:4px 0; }
+  .gallery-column { flex:1 1 180px; min-width:160px; text-align:center; }
+  .gallery-column h3 { margin:8px 0 12px; font-size:1rem; cursor:pointer; color:inherit; text-decoration:none; }
+  .gallery-thumb { display:block; width:100%; height:140px; object-fit:cover; border-radius:6px; margin:0 auto; }
+  .no-image { color:#666; font-size:0.9rem; padding:6px 0; }
+  a.category-link { color:inherit; text-decoration:none; }
 </style>
 
 <script>
-  // Configure categories and how many images each category uses
+  // Configure categories and how many images each category has
   const categories = [
     { key: 'recital', title: 'Student Recitals', count: 5 },
     { key: 'competition', title: 'Competition', count: 5 },
@@ -142,7 +162,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
   ];
 
   const base = 'images/'; // folder where files live
-  const ext = '.jpg';     // change if you use .png
+  const ext = '.jpg';     // change to .png if needed
 
   const grid = document.getElementById('gallery-grid');
 
@@ -150,41 +170,111 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     const col = document.createElement('div');
     col.className = 'gallery-column';
 
-    const heading = document.createElement('h3');
-    heading.textContent = cat.title;
-    col.appendChild(heading);
+    // Link target: category.html?cat=recital
+    const link = document.createElement('a');
+    link.className = 'category-link';
+    link.href = `category.html?cat=${encodeURIComponent(cat.key)}`;
 
-    // placeholder shown if no images load
-    const placeholder = document.createElement('div');
-    placeholder.className = 'no-image';
-    placeholder.textContent = `No images in this category. Upload ${cat.key}1${ext}, ${cat.key}2${ext}, ... to ${base}`;
-    col.appendChild(placeholder);
+    // Thumbnail image: use the first file (e.g., images/recital1.jpg)
+    const img = document.createElement('img');
+    img.className = 'gallery-thumb';
+    img.loading = 'lazy';
+    img.src = `${base}${cat.key}1${ext}`;
+    img.alt = `${cat.title} thumbnail`;
 
-    // track if any image successfully loads
-    let loadedAny = false;
+    // If the thumbnail is missing, show a placeholder text instead
+    img.onerror = () => {
+      img.remove();
+      const placeholder = document.createElement('div');
+      placeholder.className = 'no-image';
+      placeholder.textContent = 'No thumbnail — upload ' + `${cat.key}1${ext}`;
+      // place placeholder inside the link so clicking still navigates
+      link.appendChild(placeholder);
+    };
 
-    for (let i = 1; i <= cat.count; i++) {
-      const img = document.createElement('img');
-      img.className = 'gallery-thumb';
-      img.loading = 'lazy';
-      img.src = `${base}${cat.key}${i}${ext}`; // e.g. images/recital1.jpg
-      img.alt = `${cat.title} ${i}`;
+    link.appendChild(img);
 
-      img.onload = () => {
-        loadedAny = true;
-        if (placeholder.parentNode) placeholder.remove();
-      };
+    // Category title clickable — points to same category page
+    const title = document.createElement('h3');
+    const titleLink = document.createElement('a');
+    titleLink.href = link.href;
+    titleLink.className = 'category-link';
+    titleLink.textContent = cat.title;
+    title.appendChild(titleLink);
 
-      img.onerror = () => {
-        // remove missing images so they don't leave empty gaps
-        if (img.parentNode) img.remove();
-      };
-
-      col.appendChild(img);
-    }
-
+    col.appendChild(link);
+    col.appendChild(title);
     grid.appendChild(col);
   });
+</script>
+
+  <section id="category-gallery">
+  <div class="container">
+    <div id="category-heading" class="section-heading">
+      <div class="kicker">Gallery</div>
+      <h2 id="category-title"></h2>
+      <p id="category-info"></p>
+    </div>
+
+    <div id="images-grid" class="images-grid"></div>
+  </div>
+</section>
+
+<style>
+  .images-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-top:12px; }
+  .images-grid img { width:100%; height:160px; object-fit:cover; border-radius:6px; display:block; }
+  .back-link { display:inline-block; margin-top:8px; }
+</style>
+
+<script>
+  // Same category config as gallery.html — keep consistent counts
+  const categories = {
+    recital: { title: 'Student Recitals', count: 5 },
+    competition: { title: 'Competition', count: 5 },
+    exam: { title: 'Examinations', count: 5 },
+    performance: { title: 'Piano & Music', count: 5 },
+    students: { title: 'Students', count: 5 }
+  };
+
+  const base = 'images/';
+  const ext = '.jpg';
+
+  // get ?cat=recital from URL
+  const params = new URLSearchParams(location.search);
+  const catKey = params.get('cat') || '';
+  const cat = categories[catKey];
+
+  const titleEl = document.getElementById('category-title');
+  const infoEl = document.getElementById('category-info');
+  const grid = document.getElementById('images-grid');
+
+  if (!cat) {
+    titleEl.textContent = 'Category not found';
+    infoEl.textContent = 'Return to the main gallery.';
+  } else {
+    titleEl.textContent = cat.title;
+    infoEl.innerHTML = `<a class="back-link" href="gallery.html">← Back to gallery</a>`;
+
+    // load images catKey1.jpg ... catKeyN.jpg
+    let any = false;
+    for (let i = 1; i <= cat.count; i++) {
+      const src = `${base}${catKey}${i}${ext}`;
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.src = src;
+      img.alt = `${cat.title} ${i}`;
+      img.onerror = () => img.remove();
+      img.onload = () => { any = true; };
+      grid.appendChild(img);
+    }
+
+    // small timeout to show a message if nothing loaded
+    setTimeout(() => {
+      if (!grid.querySelector('img')) {
+        grid.innerHTML = `<div class="no-image">No images found for ${cat.title}. Upload ${catKey}1${ext}, ${catKey}2${ext}, ... to the images/ folder.</div>`;
+      }
+    }, 400);
+  }
 </script>
 
 <section id="reviews" class="reviews"><div class="container">
@@ -202,7 +292,6 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 <div class="details">
 <div class="detail"><div class="icon">⌖</div><div><strong>Location</strong><span>Taman Andalas Jaya, 41200 Klang, Selangor</span></div></div>
 <div class="detail"><div class="icon">☎</div><div><strong>Phone</strong><span>016-345 3132</span></div></div>
-<div class="detail"><div class="icon">◉</div><div><strong>WhatsApp</strong><span>016-345 3132</span></div></div>
 </div>
 <a class="btn gold" href="https://wa.me/60163453132" target="_blank" rel="noopener">WhatsApp J.E. Piano Studio</a>
 </div>
@@ -216,7 +305,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 <a class="mapbtn" href="https://www.google.com/maps/search/?api=1&query=J.E.%20Piano%20Studio%20Taman%20Andalas%20Jaya%20Klang" target="_blank" rel="noopener">OPEN IN GOOGLE MAPS</a>
 </div>
 </div>
-<div class="mapfoot">Private residential studio · Exact house address is not displayed publicly.</div>
+<div class="mapfoot">Taman Andalas Jaya · 41200 Klang, Selangor</div>
 </div>
 </div></section>
 
