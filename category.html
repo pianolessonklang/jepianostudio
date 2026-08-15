@@ -31,7 +31,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--black)
     <div id="category-heading" class="section-heading">
       <div class="kicker">Gallery</div>
       <h2 id="category-title">Category</h2>
-      <div id="category-info"><a class="back-link" href="index.html">← Back to gallery</a></div>
+      <div id="category-info"><a class="back-link" href="index.html#gallery">← Back to gallery</a></div>
     </div>
 
     <div id="images-grid" class="images-grid" aria-live="polite"></div>
@@ -81,7 +81,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--black)
 
   if (!cat) {
     titleEl.textContent = 'Category';
-    grid.innerHTML = `<div class="no-image">No category selected. Return to the <a href="index.html">main gallery</a>.</div>`;
+    grid.innerHTML = `<div class="no-image">No category selected. Return to the <a href="index.html#gallery">main gallery</a>.</div>`;
     return;
   }
 
