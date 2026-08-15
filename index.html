@@ -111,15 +111,82 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 <div class="journeyitem"><div class="journeyicon">★</div><h3>Personal Milestones</h3><p>Confidence, progress and musical growth</p></div>
 </div></div></section>
   
-<section id="gallery"><div class="container">
-<div class="heading reveal"><div class="kicker">Gallery</div><h2>Moments from our students' musical journey.</h2><p>Replace the sample images below with your actual recital, competition, examination and student photographs.</p></div>
-<div class="gallery reveal">
-<div class="gitem big"><img src="photosrecital.jpg">Student Recitals</div></div>
-<div class="gitem"><img src="photoscompetition.jpg">Learning Moments</div></div>
-<div class="gitem"><img src="photosexam.jpg">Student Performances</div></div>
-<div class="gitem"><img src="photosperformance.jpg">Piano & Music</div></div>
-<div class="gitem"><img src="photosstudents.jpg">Performing</div></div>
-</div></div></section>
+<section id="gallery">
+  <div class="container">
+    <div class="section-heading">
+      <div class="kicker">Gallery</div>
+      <h2>Moments from our students' musical journey.</h2>
+      <p>Replace the files in each category folder (keep the same names) to update the gallery.</p>
+    </div>
+
+    <div id="gallery-wrap" class="gallery-wrap"></div>
+  </div>
+</section>
+
+<style>
+  .gallery-wrap { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+  .category { flex:1 1 180px; min-width:160px; }
+  .category h3 { margin:0 0 8px; font-size:1rem; }
+  .thumb { display:block; width:100%; height:auto; margin-bottom:8px; object-fit:cover; border-radius:4px; }
+  .no-image { color:#666; font-size:0.9rem; }
+</style>
+
+<script>
+  // Configure categories and number of slots per category
+  const categories = [
+    { key: 'recital', title: 'Student Recitals', count: 5 },
+    { key: 'competition', title: 'Competition', count: 5 },
+    { key: 'exam', title: 'Examinations', count: 5 },
+    { key: 'performance', title: 'Piano & Music', count: 5 },
+    { key: 'students', title: 'Students', count: 5 }
+  ];
+
+  const galleryWrap = document.getElementById('gallery-wrap');
+  const base = 'images/'; // use folders like images/recital/1.jpg
+
+  categories.forEach(cat => {
+    const col = document.createElement('div');
+    col.className = 'category';
+
+    const h = document.createElement('h3');
+    h.textContent = cat.title;
+    col.appendChild(h);
+
+    let foundAny = false;
+
+    for (let i = 1; i <= cat.count; i++) {
+      const img = document.createElement('img');
+      img.className = 'thumb';
+      img.loading = 'lazy';
+      img.src = `${base}${cat.key}/${i}.jpg`;
+      img.alt = `${cat.title} ${i}`;
+
+      // hide image if missing (onerror) and keep track whether any images succeeded
+      img.onerror = () => {
+        img.remove();
+        // if no images remain, we will show placeholder below after loop
+      };
+      img.onload = () => { foundAny = true; };
+
+      col.appendChild(img);
+    }
+
+    // placeholder text if no images loaded (this runs immediately; onload handlers will update later)
+    const placeholder = document.createElement('div');
+    placeholder.className = 'no-image';
+    placeholder.textContent = 'No images in this category. Upload files to ' + base + cat.key + ' named 1.jpg, 2.jpg ...';
+    col.appendChild(placeholder);
+
+    // After small delay, if an img loaded we can remove the placeholder
+    setTimeout(() => {
+      if (col.querySelector('.thumb')) {
+        placeholder.remove();
+      }
+    }, 400); // 400ms is enough for small images; increase if needed
+
+    galleryWrap.appendChild(col);
+  });
+</script>
 
 <section id="reviews" class="reviews"><div class="container">
 <div class="heading reveal"><div class="kicker">Reviews</div><h2>What students & parents say.</h2></div>
