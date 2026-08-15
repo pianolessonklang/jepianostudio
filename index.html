@@ -46,7 +46,20 @@
     letter-spacing: .08em;
 }
     
-section{padding:110px 0}.aboutgrid{display:grid;grid-template-columns:.85fr 1.15fr;gap:95px;align-items:center}.aboutphoto{min-height:560px;background:url("https://images.unsplash.com/photo-1552422535-c45813c61732?auto=format&fit=crop&w=1100&q=90") center/cover}.abouttext p{margin-bottom:16px}.lead{font-size:1.1rem;color:#45413b}.quote{margin-top:28px;padding:22px 0 22px 23px;border-left:2px solid var(--gold);font-family:"Playfair Display",serif;font-size:1.25rem;color:#39362f}
+section{padding:110px 0}.aboutgrid{display:grid;grid-template-columns:.85fr 1.15fr;gap:95px;align-items:center}
+<section id="aboutphoto" class="aboutphoto"> ... </section>
+
+<script>
+  // base + filename — change only the filename if you want a different image
+  const aboutFile = 'aboutinstructor.jpg'; // put new file in images/ and overwrite this name if desired
+  const el = document.getElementById('aboutphoto');
+  el.style.backgroundImage =
+    `linear-gradient(90deg, rgba(13,12,10,.9), rgba(13,12,10,.42)), url("images/${aboutFile}")`;
+  el.style.backgroundPosition = 'center';
+  el.style.backgroundSize = 'cover';
+</script>
+
+.abouttext p{margin-bottom:16px}.lead{font-size:1.1rem;color:#45413b}.quote{margin-top:28px;padding:22px 0 22px 23px;border-left:2px solid var(--gold);font-family:"Playfair Display",serif;font-size:1.25rem;color:#39362f}
 .white{background:#fff}.heading{max-width:720px;margin-bottom:50px}.featuregrid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line)}.feature{padding:35px;min-height:220px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transition:.25s}.feature:hover{background:#fbf9f5}.feature:nth-child(3n){border-right:0}.feature:nth-last-child(-n+3){border-bottom:0}.num{color:var(--gold);font-size:.7rem;font-weight:700}.feature h3{margin:12px 0 9px}.feature p{font-size:.86rem}
 .approach{background:var(--cream2)}.approachgrid{display:grid;grid-template-columns:.8fr 1.2fr;gap:80px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.card{background:rgba(255,255,255,.55);border:1px solid var(--line);padding:25px;transition:.25s}.card:hover{background:#fff;transform:translateY(-3px)}.card h3{font-size:1.1rem;margin-bottom:7px}.card p{font-size:.82rem}
 .courses{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.course{border:1px solid var(--line);padding:38px;min-height:405px;display:flex;flex-direction:column;background:var(--cream);transition:.3s}.course:hover{transform:translateY(-6px);box-shadow:0 18px 45px rgba(0,0,0,.08)}.tag{color:var(--gold);font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.course h3{font-size:1.65rem;margin:18px 0 14px}.course p{font-size:.86rem;margin-bottom:12px}.for{margin-top:auto;border-top:1px solid var(--line);padding-top:18px;font-size:.74rem;color:var(--black)}
@@ -64,10 +77,15 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 
 <header class="nav" id="nav">
 <div class="container navrow">
+
 <a href="#" class="brand">
-<span class="brandmark">J.E.</span>
-<span class="brandtext">J.E. Piano Studio<small>Piano Lessons · Klang</small></span>
-</a>
+  <img src="images/logo.jpg" alt="JE Piano Studio logo" class="brand-logo">
+  <div class="brandtext">
+    <span class="brandname">J.E. Piano Studio</span>
+    <small>Piano Lessons · Klang</small>
+  </div>
+</a>    
+
 <nav class="links">
 <a href="#about">About</a><a href="#approach">Approach</a><a href="#courses">Lessons</a><a href="#journey">Students</a><a href="#gallery">Gallery</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a>
 </nav>
@@ -176,6 +194,17 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
   </div>
 </section>
 
+function openLB(src) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = src;
+  lb.style.display = 'grid';
+}
+function closeLB() { document.getElementById('lightbox').style.display = 'none'; }
+
+// when creating each img element on category page:
+img.onclick = () => openLB(img.src);
+img.style.cursor = 'pointer';
+    
 <style>
   .gallery-grid { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
   .gallery-column { flex:1 1 180px; min-width:160px; text-align:center; }
