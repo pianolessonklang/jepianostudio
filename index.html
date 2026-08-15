@@ -116,23 +116,23 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     <div class="section-heading">
       <div class="kicker">Gallery</div>
       <h2>Moments from our students' musical journey.</h2>
-      <p>Replace the files in each category folder (keep the same names) to update the gallery.</p>
+      <p>Replace files in the images/ folder using names like recital1.jpg, competition1.jpg, exam1.jpg, etc.</p>
     </div>
 
-    <div id="gallery-wrap" class="gallery-wrap"></div>
+    <div id="gallery-grid" class="gallery-grid"></div>
   </div>
 </section>
 
 <style>
-  .gallery-wrap { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
-  .category { flex:1 1 180px; min-width:160px; }
-  .category h3 { margin:0 0 8px; font-size:1rem; }
-  .thumb { display:block; width:100%; height:auto; margin-bottom:8px; object-fit:cover; border-radius:4px; }
-  .no-image { color:#666; font-size:0.9rem; }
+  .gallery-grid { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+  .gallery-column { flex:1 1 180px; min-width:160px; }
+  .gallery-column h3 { margin:0 0 8px; font-size:1rem; }
+  .gallery-thumb { display:block; width:100%; height:auto; margin-bottom:8px; object-fit:cover; border-radius:4px; }
+  .no-image { color:#666; font-size:0.9rem; padding:4px 0; }
 </style>
 
 <script>
-  // Configure categories and number of slots per category
+  // Configure categories and how many images each category uses
   const categories = [
     { key: 'recital', title: 'Student Recitals', count: 5 },
     { key: 'competition', title: 'Competition', count: 5 },
@@ -141,50 +141,49 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     { key: 'students', title: 'Students', count: 5 }
   ];
 
-  const galleryWrap = document.getElementById('gallery-wrap');
-  const base = 'images/'; // use folders like images/recital/1.jpg
+  const base = 'images/'; // folder where files live
+  const ext = '.jpg';     // change if you use .png
+
+  const grid = document.getElementById('gallery-grid');
 
   categories.forEach(cat => {
     const col = document.createElement('div');
-    col.className = 'category';
+    col.className = 'gallery-column';
 
-    const h = document.createElement('h3');
-    h.textContent = cat.title;
-    col.appendChild(h);
+    const heading = document.createElement('h3');
+    heading.textContent = cat.title;
+    col.appendChild(heading);
 
-    let foundAny = false;
+    // placeholder shown if no images load
+    const placeholder = document.createElement('div');
+    placeholder.className = 'no-image';
+    placeholder.textContent = `No images in this category. Upload ${cat.key}1${ext}, ${cat.key}2${ext}, ... to ${base}`;
+    col.appendChild(placeholder);
+
+    // track if any image successfully loads
+    let loadedAny = false;
 
     for (let i = 1; i <= cat.count; i++) {
       const img = document.createElement('img');
-      img.className = 'thumb';
+      img.className = 'gallery-thumb';
       img.loading = 'lazy';
-      img.src = `${base}${cat.key}/${i}.jpg`;
+      img.src = `${base}${cat.key}${i}${ext}`; // e.g. images/recital1.jpg
       img.alt = `${cat.title} ${i}`;
 
-      // hide image if missing (onerror) and keep track whether any images succeeded
-      img.onerror = () => {
-        img.remove();
-        // if no images remain, we will show placeholder below after loop
+      img.onload = () => {
+        loadedAny = true;
+        if (placeholder.parentNode) placeholder.remove();
       };
-      img.onload = () => { foundAny = true; };
+
+      img.onerror = () => {
+        // remove missing images so they don't leave empty gaps
+        if (img.parentNode) img.remove();
+      };
 
       col.appendChild(img);
     }
 
-    // placeholder text if no images loaded (this runs immediately; onload handlers will update later)
-    const placeholder = document.createElement('div');
-    placeholder.className = 'no-image';
-    placeholder.textContent = 'No images in this category. Upload files to ' + base + cat.key + ' named 1.jpg, 2.jpg ...';
-    col.appendChild(placeholder);
-
-    // After small delay, if an img loaded we can remove the placeholder
-    setTimeout(() => {
-      if (col.querySelector('.thumb')) {
-        placeholder.remove();
-      }
-    }, 400); // 400ms is enough for small images; increase if needed
-
-    galleryWrap.appendChild(col);
+    grid.appendChild(col);
   });
 </script>
 
