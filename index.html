@@ -267,66 +267,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
   </div>
 </section>
 
-<script>
-/* Build homepage category cards.
-   Save images as images/recital1.jpg images/competition1.jpg etc.
-   This script expects index.html and category.html to be in same folder as images/ */
-(function () {
-  const categories = [
-    { key: 'recital', title: 'Student Recitals', count: 5 },
-    { key: 'competition', title: 'Competition', count: 5 },
-    { key: 'exam', title: 'Examinations', count: 5 },
-    { key: 'performance', title: 'Piano & Music', count: 5 },
-    { key: 'students', title: 'Students', count: 5 }
-  ];
-
-  const base = 'images/';
-  const ext = '.jpg';
-  const grid = document.getElementById('gallery-grid');
-
-  if (!grid) return;
-
-  categories.forEach(cat => {
-    const card = document.createElement('div');
-    card.className = 'category-card';
-
-    const href = `category.html?cat=${encodeURIComponent(cat.key)}`;
-
-    // image (clickable)
-    const aImg = document.createElement('a');
-    aImg.href = href;
-    aImg.setAttribute('aria-label', cat.title);
-
-    const img = document.createElement('img');
-    img.className = 'category-thumb';
-    img.src = `${base}${cat.key}1${ext}`;
-    img.alt = cat.title + ' thumbnail';
-    img.loading = 'lazy';
-
-    // if thumbnail missing, remove and put placeholder text
-    img.onerror = () => {
-      if (img.parentNode) img.remove();
-      const placeholder = document.createElement('div');
-      placeholder.className = 'no-image';
-      placeholder.textContent = `No thumbnail — upload ${cat.key}1${ext}`;
-      aImg.appendChild(placeholder);
-    };
-
-    aImg.appendChild(img);
-    card.appendChild(aImg);
-
-    // title (clickable)
-    const titleLink = document.createElement('a');
-    titleLink.href = href;
-    titleLink.className = 'category-title';
-    titleLink.textContent = cat.title;
-    card.appendChild(titleLink);
-
-    grid.appendChild(card);
-  });
-})();
-</script>
-<!-- ====== End gallery block ====== -->
+<script> /* Replace existing gallery builder with this. It chooses the first available thumbnail for each category. */ (function () { const categories = [ { key: 'recital', title: 'Student Recitals', count: 5 }, { key: 'competition', title: 'Competition', count: 5 }, { key: 'exam', title: 'Examinations', count: 5 }, { key: 'performance', title: 'Piano & Music', count: 5 }, { key: 'students', title: 'Students', count: 5 }, { key: 'video', title: 'Videos', count: 5 } // optional video category ]; const base = 'images/'; // adjust to '../images/' if index.html is inside a subfolder const ext = '.jpg'; const grid = document.getElementById('gallery-grid'); if (!grid) return; // helper: check existence of an image (calls resolve(true) if loaded, false if error) function testImage(url) { return new Promise(resolve => { const img = new Image(); img.onload = () => resolve(true); img.onerror = () => resolve(false); img.src = url; }); } categories.forEach(async (cat) => { const card = document.createElement('div'); card.className = 'category-card'; const href = `category.html?cat=${encodeURIComponent(cat.key)}`; // find first available thumbnail file for this category let foundSrc = ''; for (let i = 1; i <= cat.count; i++) { const candidate = `${base}${cat.key}${i}${ext}`; // eslint-disable-next-line no-await-in-loop const ok = await testImage(candidate); if (ok) { foundSrc = candidate; break; } } const aImg = document.createElement('a'); aImg.href = href; aImg.setAttribute('aria-label', cat.title); if (foundSrc) { const img = document.createElement('img'); img.className = 'category-thumb'; img.src = foundSrc; img.alt = cat.title + ' thumbnail'; img.loading = 'lazy'; aImg.appendChild(img); } else { const placeholder = document.createElement('div'); placeholder.className = 'no-image'; placeholder.textContent = `No thumbnail — upload ${cat.key}1${ext} (or ${cat.key}2${ext} etc.)`; aImg.appendChild(placeholder); } card.appendChild(aImg); const titleLink = document.createElement('a'); titleLink.href = href; titleLink.className = 'category-title'; titleLink.textContent = cat.title; card.appendChild(titleLink); grid.appendChild(card); }); })(); </script>
     
 <section id="reviews" class="reviews"><div class="container">
 <div class="heading reveal"><div class="kicker">Reviews</div><h2>What students & parents say.</h2></div>
