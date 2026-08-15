@@ -47,17 +47,18 @@
 }
     
 section{padding:110px 0}.aboutgrid{display:grid;grid-template-columns:.85fr 1.15fr;gap:95px;align-items:center}
-<section id="aboutphoto" class="aboutphoto"> ... </section>
 
-<script>
-  // base + filename — change only the filename if you want a different image
-  const aboutFile = 'aboutinstructor.jpg'; // put new file in images/ and overwrite this name if desired
-  const el = document.getElementById('aboutphoto');
-  el.style.backgroundImage =
-    `linear-gradient(90deg, rgba(13,12,10,.9), rgba(13,12,10,.42)), url("images/${aboutFile}")`;
-  el.style.backgroundPosition = 'center';
-  el.style.backgroundSize = 'cover';
-</script>
+/* put this in your stylesheet */
+.aboutphoto {
+  min-height: 560px;
+  /* dark gradient on top of the image for text contrast */
+  background:
+    linear-gradient(90deg, rgba(13,12,10,.9), rgba(13,12,10,.42)),
+    url("images/about-instructor.jpg") center/cover no-repeat;
+  color: #fff;
+  display:flex;
+  align-items:flex-end;
+}
 
 .abouttext p{margin-bottom:16px}.lead{font-size:1.1rem;color:#45413b}.quote{margin-top:28px;padding:22px 0 22px 23px;border-left:2px solid var(--gold);font-family:"Playfair Display",serif;font-size:1.25rem;color:#39362f}
 .white{background:#fff}.heading{max-width:720px;margin-bottom:50px}.featuregrid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line)}.feature{padding:35px;min-height:220px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transition:.25s}.feature:hover{background:#fbf9f5}.feature:nth-child(3n){border-right:0}.feature:nth-last-child(-n+3){border-bottom:0}.num{color:var(--gold);font-size:.7rem;font-weight:700}.feature h3{margin:12px 0 9px}.feature p{font-size:.86rem}
@@ -176,10 +177,10 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 <section id="journey" class="dark"><div class="container">
 <div class="heading reveal"><div class="kicker">Student Journey</div><h2>Every achievement matters.</h2><p>From the first lesson to the concert stage, every student has a different journey.</p></div>
 <div class="journey reveal">
-<div class="journeyitem"><div class="journeyicon">♪</div><h3>Examinations</h3><p>ABRSM · Trinity</p></div>
-<div class="journeyitem"><div class="journeyicon">♛</div><h3>Competitions</h3><p>Local & International Competitions</p></div>
-<div class="journeyitem"><div class="journeyicon">♫</div><h3>Performances</h3><p>Recitals · Festivals · Public Performances</p></div>
 <div class="journeyitem"><div class="journeyicon">★</div><h3>Personal Milestones</h3><p>Confidence, progress and musical growth</p></div>
+<div class="journeyitem"><div class="journeyicon">♪</div><h3>Examinations</h3><p>ABRSM · Trinity</p></div>
+<div class="journeyitem"><div class="journeyicon">♫</div><h3>Performances</h3><p>Recitals · Festivals · Public Performances</p></div>
+<div class="journeyitem"><div class="journeyicon">♛</div><h3>Competitions</h3><p>Local & International Competitions</p></div>
 </div></div></section>
   
 <section id="gallery">
