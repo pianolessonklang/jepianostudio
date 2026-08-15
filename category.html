@@ -79,6 +79,62 @@ body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--black)
   const titleEl = document.getElementById('category-title');
   const grid = document.getElementById('images-grid');
 
+  // Render combined "all" view when ?cat=all
+if (catKey === 'all') {
+  titleEl.textContent = 'All Photos';
+  grid.innerHTML = '';
+
+  Object.keys(categories).forEach(k => {
+    const c = categories[k];
+    if (c.type !== 'photos') return; // skip non-photo categories if you prefer
+
+    const section = document.createElement('div');
+    const heading = document.createElement('h3');
+    heading.textContent = c.title;
+    heading.style.fontFamily = '"Playfair Display", serif';
+    heading.style.margin = '18px 0 8px';
+    section.appendChild(heading);
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'images-grid';
+    section.appendChild(wrapper);
+    grid.appendChild(section);
+
+    let found = false;
+    for (let i = 1; i <= c.count; i++) {
+      (function(src){
+        const tester = new Image();
+        tester.onload = () => {
+          found = true;
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = `${c.title} ${i}`;
+          img.addEventListener('click', () => {
+            // find index among all images in the page and open lightbox
+            const imgs = Array.from(document.querySelectorAll('.images-grid img'));
+            const idx = imgs.indexOf(img);
+            if (typeof openLB === 'function') openLB(idx);
+          });
+          wrapper.appendChild(img);
+        };
+        tester.onerror = () => {};
+        tester.src = src;
+      })(`${base}${k}${i}${ext}`);
+    }
+
+    setTimeout(() => {
+      if (!found) {
+        const msg = document.createElement('div');
+        msg.className = 'no-image';
+        msg.textContent = `No images for ${c.title}. Upload images/${k}1${ext}`;
+        wrapper.appendChild(msg);
+      }
+    }, 600);
+  });
+
+  return;
+}
+ 
   if (!cat) {
     titleEl.textContent = 'Category';
     grid.innerHTML = `<div class="no-image">No category selected. Return to the <a href="index.html#gallery">main gallery</a>.</div>`;
