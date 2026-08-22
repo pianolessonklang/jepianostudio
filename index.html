@@ -335,7 +335,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       <h2>What students &amp; parents say.</h2>
     </div>
 
-    <div class="reviews-carousel reveal" aria-roledescription="carousel">
+    <div class="reviews-carousel reveal" aria-roledescription="carousel" tabindex="0">
       <button class="carousel-btn prev" aria-label="Previous review" type="button">‹</button>
 
       <div class="carousel-viewport" aria-live="polite">
@@ -387,9 +387,10 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       align-items:stretch;
       padding-bottom:4px;
     }
+    .carousel-track.no-transition { transition: none !important; }
 
-    /* slide size will be set by JS to create the centered single-column look */
-    .slide { flex:0 0 auto; box-sizing:border-box; }
+    /* slide size controlled by JS */
+    .slide { flex:0 0 auto; box-sizing:border-box; cursor:pointer; }
     .review {
       padding:28px;
       min-height:180px;
@@ -433,7 +434,6 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     }
     .carousel-dot.active { background:var(--gold); }
 
-    /* responsive tweaks (JS controls exact slide width) */
     @media (max-width:520px) {
       .carousel-btn { width:42px; height:42px; font-size:22px; }
     }
@@ -446,98 +446,214 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 
       const viewport = carousel.querySelector('.carousel-viewport');
       const track = carousel.querySelector('.carousel-track');
-      const slides = Array.from(track.children);
       const prevBtn = carousel.querySelector('.carousel-btn.prev');
       const nextBtn = carousel.querySelector('.carousel-btn.next');
       const dotsWrap = carousel.querySelector('.carousel-dots');
 
-      let currentIndex = 0;
+      // original slides (before cloning)
+      const originalSlides = Array.from(track.children);
+      if (originalSlides.length === 0) return;
+
+      // clone last -> front, first -> end for seamless looping
+      const firstClone = originalSlides[0].cloneNode(true);
+      const lastClone = originalSlides[originalSlides.length - 1].cloneNode(true);
+      track.appendChild(firstClone);
+      track.insertBefore(lastClone, track.firstChild);
+
+      // now slides includes clones
+      const slides = Array.from(track.children);
+      const realCount = originalSlides.length;
+
+      // layout vars
+      let currentIndex = 1; // start at first real slide (because index 0 is lastClone)
       let slideWidth = 0;
       const gap = parseInt(getComputedStyle(track).gap) || 20;
+      let isAnimating = false;
 
-      // Percentage of viewport that a slide occupies (controls how much of adjacent slides peek)
+      // autoplay vars
+      const AUTOPLAY_MS = 4000; // change this value to speed up / slow down autoplay
+      let autoplayTimer = null;
+      const AUTOPLAY_PAUSE_ON_INTERACTION_MS = 6000; // after a manual interaction, pause this long before resuming
+
       function slidePercent() {
         const w = window.innerWidth;
-        if (w >= 1200) return 0.56;   // large screens: ~56% width slide -> clear peeks
+        if (w >= 1200) return 0.56;
         if (w >= 900) return 0.62;
         if (w >= 520) return 0.78;
-        return 0.92;                  // mobile: almost full-width but tiny peek
+        return 0.92;
       }
 
+      function setSlideWidths() {
+        const pct = slidePercent();
+        slideWidth = Math.round(viewport.clientWidth * pct);
+        slides.forEach(s => s.style.width = slideWidth + 'px');
+      }
+
+      function offsetCenter() {
+        return Math.round((viewport.clientWidth - slideWidth) / 2);
+      }
+
+      function setPosition(animate = true) {
+        if (!animate) {
+          track.classList.add('no-transition');
+        } else {
+          track.classList.remove('no-transition');
+        }
+        const x = -currentIndex * (slideWidth + gap) + offsetCenter();
+        track.style.transform = 'translateX(' + x + 'px)';
+        // ensure no-transition takes effect when used
+        if (!animate) track.getBoundingClientRect();
+        if (!animate) track.classList.remove('no-transition');
+      }
+
+      // build dots for the real slides only
       function buildDots() {
         dotsWrap.innerHTML = '';
-        slides.forEach((_, i) => {
+        for (let i = 0; i < realCount; i++) {
           const btn = document.createElement('button');
           btn.className = 'carousel-dot';
           btn.setAttribute('aria-label', 'Show review ' + (i + 1));
           btn.setAttribute('role', 'tab');
-          btn.addEventListener('click', () => { goTo(i); });
+          btn.addEventListener('click', () => {
+            goToReal(i);
+            pauseAutoplayAfterInteraction();
+          });
           dotsWrap.appendChild(btn);
-        });
-      }
-
-      function resize() {
-        // set slide width in pixels so we can center the active slide and allow peeks
-        const pct = slidePercent();
-        slideWidth = Math.round(viewport.clientWidth * pct);
-        slides.forEach(s => { s.style.width = slideWidth + 'px'; });
-        update(); // positions track
-        updateButtons();
-        updateDots();
-      }
-
-      function update() {
-        // compute centered translate so the current slide sits centered in viewport
-        // offsetCenter shifts the whole track so slide is centered
-        const offsetCenter = (viewport.clientWidth - slideWidth) / 2;
-        const x = -currentIndex * (slideWidth + gap) + offsetCenter;
-        track.style.transform = 'translateX(' + x + 'px)';
-      }
-
-      function goTo(index) {
-        currentIndex = Math.max(0, Math.min(index, slides.length - 1));
-        update();
-        updateButtons();
-        updateDots();
-        // move focus to the slide for keyboard/screen-reader users
-        const currentSlide = slides[currentIndex];
-        if (currentSlide) {
-          const focusable = currentSlide.querySelector('a, button, input, textarea, [tabindex]');
-          (focusable || currentSlide).focus({ preventScroll: true });
         }
       }
 
-      function updateButtons() {
-        prevBtn.disabled = currentIndex === 0;
-        nextBtn.disabled = currentIndex === slides.length - 1;
-      }
-
       function updateDots() {
-        const dots = Array.from(dotsWrap.children);
-        dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+        const realIndex = (currentIndex - 1 + realCount) % realCount;
+        Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === realIndex));
       }
 
-      prevBtn.addEventListener('click', () => { goTo(currentIndex - 1); });
-      nextBtn.addEventListener('click', () => { goTo(currentIndex + 1); });
+      function updateButtons() {
+        // looping carousel: buttons remain enabled
+        prevBtn.disabled = false;
+        nextBtn.disabled = false;
+      }
+
+      function goTo(index) {
+        if (isAnimating) return;
+        isAnimating = true;
+        track.classList.remove('no-transition');
+        currentIndex = index;
+        setPosition(true);
+      }
+
+      function goToReal(realIndex) {
+        // realIndex is 0..realCount-1 => map to slide index = realIndex + 1
+        goTo(realIndex + 1);
+      }
+
+      prevBtn.addEventListener('click', () => {
+        if (isAnimating) return;
+        goTo(currentIndex - 1);
+        pauseAutoplayAfterInteraction();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (isAnimating) return;
+        goTo(currentIndex + 1);
+        pauseAutoplayAfterInteraction();
+      });
+
+      // when transition ends, if we're on a clone, snap to the corresponding real slide without animation
+      track.addEventListener('transitionend', () => {
+        isAnimating = false;
+        // moved to first clone (at end) -> snap to first real
+        if (currentIndex === slides.length - 1) {
+          currentIndex = 1;
+          setPosition(false);
+        }
+        // moved to last clone (at start) -> snap to last real
+        if (currentIndex === 0) {
+          currentIndex = slides.length - 2;
+          setPosition(false);
+        }
+        updateDots();
+      });
 
       // keyboard support
       carousel.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') { prevBtn.click(); }
-        if (e.key === 'ArrowRight') { nextBtn.click(); }
+        if (e.key === 'ArrowLeft') { prevBtn.click(); pauseAutoplayAfterInteraction(); }
+        if (e.key === 'ArrowRight') { nextBtn.click(); pauseAutoplayAfterInteraction(); }
       });
+
+      // clicking a peeked slide jumps to it
+      slides.forEach((s, i) => s.addEventListener('click', (e) => {
+        // ignore clicks on interactive elements within slide
+        if (e.target.closest('button, a, input, textarea')) return;
+        // map clicked index to a real slide index and navigate
+        let realIndex = (i - 1 + realCount) % realCount;
+        if (realIndex !== ((currentIndex - 1 + realCount) % realCount)) {
+          goToReal(realIndex);
+          pauseAutoplayAfterInteraction();
+        }
+      }));
+
+      // AUTOPLAY: start/stop/pause-after-interaction
+      function startAutoplay() {
+        stopAutoplay();
+        autoplayTimer = setInterval(() => {
+          if (isAnimating) return;
+          goTo(currentIndex + 1);
+        }, AUTOPLAY_MS);
+      }
+
+      function stopAutoplay() {
+        if (autoplayTimer) {
+          clearInterval(autoplayTimer);
+          autoplayTimer = null;
+        }
+      }
+
+      let interactionPauseTimer = null;
+      function pauseAutoplayAfterInteraction() {
+        // stop autoplay and set a timer to restart after user stops interacting
+        stopAutoplay();
+        if (interactionPauseTimer) clearTimeout(interactionPauseTimer);
+        interactionPauseTimer = setTimeout(() => {
+          startAutoplay();
+        }, AUTOPLAY_PAUSE_ON_INTERACTION_MS);
+      }
+
+      // pause on hover/focus and resume when leaving/blur
+      carousel.addEventListener('mouseenter', () => { stopAutoplay(); });
+      carousel.addEventListener('mouseleave', () => { startAutoplay(); });
+      carousel.addEventListener('focusin', () => { stopAutoplay(); });
+      carousel.addEventListener('focusout', () => { startAutoplay(); });
+
+      // also pause when the page is hidden (tab inactive)
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopAutoplay();
+        else startAutoplay();
+      });
+
+      // resize handling
+      function resizeHandler() {
+        setSlideWidths();
+        // ensure correct position after width change (no animation)
+        setPosition(false);
+      }
+      window.addEventListener('resize', resizeHandler);
 
       // initialize
       buildDots();
-      window.addEventListener('resize', resize);
-      // small timeout to ensure layout settled before sizing
-      setTimeout(resize, 30);
+      setSlideWidths();
+      // initial position show first real slide, no animation
+      setPosition(false);
+      updateDots();
+      updateButtons();
 
-      // allow clicking slides to jump to them (makes the peeks interactive)
-      slides.forEach((s, i) => s.addEventListener('click', (e) => {
-        // ignore clicks on controls inside the slide
-        if (e.target.closest('button, a, input, textarea')) return;
-        if (i !== currentIndex) goTo(i);
-      }));
+      // start autoplay
+      startAutoplay();
+
+      // safety: in case a transition never fires transitionend, clear isAnimating after a timeout
+      track.addEventListener('transitionstart', () => {
+        // if transition doesn't complete in reasonable time, reset flag
+        setTimeout(() => { isAnimating = false; }, 800);
+      });
     })();
   </script>
 </section>
