@@ -337,37 +337,69 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       const INTERACTION_PAUSE_MS = 4000;
       const FADE_MS = 600;
 
-      let current = 0;
-      let autoplayTimer = null;
-      let interactionTimer = null;
-      let isTransitioning = false;
+     let current = 0;
+    let autoplayTimer = null;
+    let interactionTimer = null;
+    let isTransitioning = false;
+    let validIndices = []; // Tracks successfully loaded images
 
-      // Build slides synchronously to prevent cache race freezes
-      function buildSlides() {
-        track.innerHTML = '';
+    // Check if images exist and build slides asynchronously
+    function buildSlides() {
+      track.innerHTML = '';
+      validIndices = [];
+
+      for (let i = 1; i <= MAX_IMAGES; i++) {
+        const imgPath = `images/gallery${i}.jpg`;
         
-        for (let i = 1; i <= TOTAL_IMAGES; i++) {
-          const slide = document.createElement('div');
-          slide.className = 'gallery-slide';
-          slide.setAttribute('role', 'group');
-          slide.setAttribute('aria-roledescription', 'slide');
-          slide.setAttribute('aria-label', `Photo ${i} of ${TOTAL_IMAGES}`);
+        // Create an image object to test loading
+        const tempImg = new Image();
+        tempImg.src = imgPath;
+        
+        tempImg.onload = () => {
+          createSlide(i, imgPath);
+        };
 
-          const img = document.createElement('img');
-          img.className = 'gallery-image';
-          img.src = `images/gallery${i}.jpg`;
-          img.alt = `Gallery photo ${i}`;
-          img.loading = 'lazy';
+        tempImg.onerror = () => {
+          // Image does not exist or failed to load - skip it silently
+        };
+      }
 
-          // If an image doesn't exist, remove it cleanly from rendering flow
-          img.onerror = function() {
-            slide.classList.add('hidden-broken-slide');
-            // Refresh carousel calculations since total count changed
-            initCarousel(); 
-          };
+      // Hide carousel container if zero images load within 2 seconds
+      setTimeout(() => {
+        if (validIndices.length === 0) {
+          track.innerHTML = '<div style="padding:40px;text-align:center;color:#999;">No images uploaded yet.</div>';
+          carousel.style.display = 'none';
+        }
+      }, 2000);
+    }
 
-          slide.appendChild(img);
-          track.appendChild(slide);
+    // Safely insert elements only for valid image loads
+    function createSlide(index, imgPath) {
+      if (validIndices.includes(index)) return; 
+      
+      validIndices.push(index);
+
+      const slide = document.createElement('div');
+      slide.className = 'gallery-slide';
+      slide.setAttribute('role', 'group');
+      slide.setAttribute('aria-roledescription', 'slide');
+      slide.setAttribute('aria-label', `Photo ${validIndices.length} of ${MAX_IMAGES}`);
+
+      const img = document.createElement('img');
+      img.className = 'gallery-image';
+      img.src = imgPath;
+      img.alt = `Gallery photo ${index}`;
+      img.loading = 'lazy';
+      
+      // FIXES PORTRAIT ISSUES: Forces the tall images to fill the 16:9 box nicely
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      img.style.objectPosition = 'center';
+
+      slide.appendChild(img);
+      track.appendChild(slide);
+
         }
       }
 
