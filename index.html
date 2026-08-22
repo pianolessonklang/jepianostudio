@@ -391,11 +391,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       img.alt = `Gallery photo ${index}`;
       img.loading = 'lazy';
       
-      // FIXES PORTRAIT ISSUES: Forces the tall images to fill the 16:9 box nicely
-      img.style.width = '100%';
-      img.style.height = '100%';
-      img.style.objectFit = 'cover';
-      img.style.objectPosition = 'center';
+     
 
       slide.appendChild(img);
       track.appendChild(slide);
