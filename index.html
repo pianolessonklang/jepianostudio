@@ -328,13 +328,293 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 </script>
 <!-- ====== End gallery block ====== -->
 
-<section id="reviews" class="reviews"><div class="container">
-<div class="heading reveal"><div class="kicker">Reviews</div><h2>What students & parents say.</h2></div>
-<div class="reviewgrid reveal">
-<div class="review"><div class="stars">★★★★★</div><p>“As an adult student, it is quite easy to keep putting piano aside because of work and other things. J.E. really understands this and always finds ways to make the playing easier and less frustrating. It keeps me going.”</p><strong>— Michelle</strong></div>
-<div class="review"><div class="stars">★★★★★</div><p>“What I appreciate most is the patience and encouragement. If I struggle with a piece, J.E. finds another way to explain it instead of simply telling me to practise more.”</p><strong>— Elaine</strong></div>
-<div class="review"><div class="stars">★★★★★</div><p>“Our child has improved so much and, more importantly, has become more confident and enjoys playing piano. We are very happy with the learning experience.”</p><strong>— Parent</strong></div>
-</div></div></section>
+<section id="reviews" class="reviews">
+  <div class="container">
+    <div class="heading reveal">
+      <div class="kicker">Reviews</div>
+      <h2>What students &amp; parents say.</h2>
+    </div>
+
+    <!-- 3D Reviews Carousel (scoped) -->
+    <div id="reviews-3d" class="reviews-3d reveal" aria-roledescription="carousel" aria-label="Student and parent reviews">
+      <div class="reviews-3d-scene" tabindex="0">
+        <div class="reviews-3d-ring" id="reviewsRing" aria-hidden="false">
+          <div class="reviews-3d-face" data-index="0" tabindex="0" role="group" aria-roledescription="slide" aria-label="Review 1 of 3">
+            <div class="stars">★★★★★</div>
+            <p>“As an adult student, it is quite easy to keep putting piano aside because of work and other things. J.E. really understands this and always finds ways to make the playing easier and less frustrating. It keeps me going.”</p>
+            <strong>— Michelle</strong>
+          </div>
+
+          <div class="reviews-3d-face" data-index="1" tabindex="-1" role="group" aria-roledescription="slide" aria-label="Review 2 of 3">
+            <div class="stars">★★★★★</div>
+            <p>“What I appreciate most is the patience and encouragement. If I struggle with a piece, J.E. finds another way to explain it instead of simply telling me to practise more.”</p>
+            <strong>— Elaine</strong>
+          </div>
+
+          <div class="reviews-3d-face" data-index="2" tabindex="-1" role="group" aria-roledescription="slide" aria-label="Review 3 of 3">
+            <div class="stars">★★★★★</div>
+            <p>“Our child has improved so much and, more importantly, has become more confident and enjoys playing piano. We are very happy with the learning experience.”</p>
+            <strong>— Parent</strong>
+          </div>
+        </div>
+
+        <button class="reviews-3d-control prev" id="reviewsPrev" aria-label="Previous review" type="button">‹</button>
+        <button class="reviews-3d-control next" id="reviewsNext" aria-label="Next review" type="button">›</button>
+      </div>
+
+      <div class="reviews-3d-dots" id="reviewsDots" role="tablist" aria-label="Reviews pagination"></div>
+    </div>
+  </div>
+
+  <style>
+    /* Scoped 3D reviews carousel styles */
+    #reviews { padding:48px 0; }
+    #reviews .heading { margin-bottom:18px; }
+
+    /* Scene */
+    .reviews-3d-scene { display:flex; justify-content:center; align-items:center; position:relative; }
+    .reviews-3d-scene:focus { outline: none; }
+
+    .reviews-3d-scene .reviews-3d-ring {
+      width: min(760px, 92%);
+      height: 260px;
+      position:relative;
+      transform-style: preserve-3d;
+      will-change: transform;
+      margin: 6px auto;
+      perspective: 1200px;
+    }
+
+    .reviews-3d-face {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 68%;
+      height: 72%;
+      background: var(--cream, #f7f4ee);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.12);
+      border: 1px solid var(--line, #ded7ca);
+      box-sizing: border-box;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      cursor: pointer;
+      transition: box-shadow .28s ease, transform .28s ease, opacity .45s ease;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+
+    .reviews-3d-face .stars { color:#d4a017; font-size:1.05rem; margin-bottom:10px; }
+    .reviews-3d-face p { margin-bottom:12px; color:#2e2b26; line-height:1.6; }
+    .reviews-3d-face strong { color:#1d1c19; }
+
+    .reviews-3d-face.face-front {
+      box-shadow: 0 20px 48px rgba(0,0,0,.18);
+      transform: translate(-50%, -50%) scale(1.02);
+      z-index: 4;
+    }
+
+    /* Controls */
+    .reviews-3d-control {
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      z-index:6;
+      background:rgba(13,12,10,.06);
+      border:0;
+      width:44px;
+      height:44px;
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      cursor:pointer;
+    }
+    .reviews-3d-control.prev { left:8px; }
+    .reviews-3d-control.next { right:8px; }
+
+    /* Dots */
+    .reviews-3d-dots { margin-top:18px; text-align:center; display:flex; justify-content:center; gap:10px; }
+    .reviews-3d-dots .dot { width:10px; height:10px; border-radius:50%; background:rgba(0,0,0,0.12); border:2px solid transparent; cursor:pointer; }
+    .reviews-3d-dots .dot.active { background:var(--gold,#ae8751); }
+
+    /* Responsive */
+    @media (max-width:700px) {
+      .reviews-3d-scene .reviews-3d-ring { height:220px; }
+      .reviews-3d-face { width:86%; height:76%; }
+    }
+  </style>
+
+  <script>
+    (function () {
+      const ring = document.getElementById('reviewsRing');
+      const faces = Array.from(ring.querySelectorAll('.reviews-3d-face'));
+      const prevBtn = document.getElementById('reviewsPrev');
+      const nextBtn = document.getElementById('reviewsNext');
+      const dotsWrap = document.getElementById('reviewsDots');
+      const scene = ring.parentElement;
+      if (!ring || faces.length === 0) return;
+
+      const STEP_MS = 2000;           // autoplay per-step (requested)
+      const INTERACTION_PAUSE_MS = 4000; // pause after user interaction
+      const TRANSITION_MS = 600;      // smooth rotation duration
+
+      let count = faces.length;
+      let theta = 360 / count;
+      let currentIndex = 0;
+      let radius = computeRadius();
+      let isAnimating = false;
+      let autoplayTimer = null;
+      let lastInteraction = 0;
+      let resumeTimer = null;
+
+      // compute a sensible radius based on container width and number of faces
+      function computeRadius() {
+        const containerWidth = Math.max(300, ring.clientWidth);
+        // approximate radius so faces sit comfortably around ring
+        let r = Math.round( (containerWidth / 2) / Math.tan(Math.PI / count) );
+        // clamp
+        r = Math.max(120, Math.min(r, 420));
+        return r;
+      }
+
+      // position faces around the Y axis
+      function placeFaces() {
+        const pxWidth = Math.round(ring.clientWidth * 0.68);
+        faces.forEach((face, i) => {
+          const angle = theta * i;
+          face.style.width = pxWidth + 'px';
+          face.style.transform = `translate(-50%,-50%) rotateY(${angle}deg) translateZ(${radius}px)`;
+        });
+        // ensure ring positioned to current index
+        rotateToIndex(currentIndex, false);
+      }
+
+      function rotateToIndex(index, animate = true) {
+        if (animate) {
+          ring.style.transition = `transform ${TRANSITION_MS}ms cubic-bezier(.22,.9,.36,1)`;
+        } else {
+          ring.style.transition = 'none';
+        }
+        const angle = -theta * index;
+        ring.style.transform = `rotateY(${angle}deg)`;
+        // update face front class and ARIA
+        faces.forEach((f, i) => {
+          const diff = (i - index + count) % count;
+          if (diff === 0) {
+            f.classList.add('face-front');
+            f.setAttribute('aria-hidden', 'false');
+            f.setAttribute('tabindex', '0');
+          } else {
+            f.classList.remove('face-front');
+            f.setAttribute('aria-hidden', 'true');
+            f.setAttribute('tabindex', '-1');
+          }
+        });
+        updateDots(index);
+      }
+
+      function goTo(index) {
+        if (isAnimating) return;
+        isAnimating = true;
+        currentIndex = ((index % count) + count) % count;
+        rotateToIndex(currentIndex, true);
+        setTimeout(() => { isAnimating = false; }, TRANSITION_MS + 30);
+      }
+      function nextIndex() { return (currentIndex + 1) % count; }
+      function prevIndex() { return (currentIndex - 1 + count) % count; }
+
+      // Dots
+      function buildDots() {
+        dotsWrap.innerHTML = '';
+        faces.forEach((_, i) => {
+          const b = document.createElement('button');
+          b.className = 'dot';
+          b.setAttribute('aria-label', 'Show review ' + (i + 1));
+          b.addEventListener('click', () => { goTo(i); pauseAutoplayAfterInteraction(); });
+          dotsWrap.appendChild(b);
+        });
+        updateDots(currentIndex);
+      }
+      function updateDots(activeIndex) {
+        Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === activeIndex));
+      }
+
+      // Autoplay
+      function startAutoplay() {
+        stopAutoplay();
+        autoplayTimer = setInterval(() => {
+          // if user recently interacted, skip advancing
+          if (Date.now() - lastInteraction < INTERACTION_PAUSE_MS) return;
+          goTo(nextIndex());
+        }, STEP_MS);
+      }
+      function stopAutoplay() {
+        if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
+      }
+      function pauseAutoplayAfterInteraction() {
+        lastInteraction = Date.now();
+        stopAutoplay();
+        if (resumeTimer) clearTimeout(resumeTimer);
+        resumeTimer = setTimeout(() => {
+          lastInteraction = 0;
+          startAutoplay();
+        }, INTERACTION_PAUSE_MS);
+      }
+
+      // Controls
+      prevBtn.addEventListener('click', () => { goTo(prevIndex()); pauseAutoplayAfterInteraction(); });
+      nextBtn.addEventListener('click', () => { goTo(nextIndex()); pauseAutoplayAfterInteraction(); });
+
+      // keyboard
+      scene.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { goTo(prevIndex()); pauseAutoplayAfterInteraction(); }
+        if (e.key === 'ArrowRight') { goTo(nextIndex()); pauseAutoplayAfterInteraction(); }
+      });
+
+      // clicking a face navigates to it (if not front)
+      faces.forEach((f, i) => {
+        f.addEventListener('click', (ev) => {
+          if (ev.target.closest('button, a, input, textarea')) return;
+          if (i !== currentIndex) { goTo(i); pauseAutoplayAfterInteraction(); }
+        });
+      });
+
+      // pause/resume on hover/focus/visibility
+      scene.addEventListener('mouseenter', stopAutoplay);
+      scene.addEventListener('mouseleave', startAutoplay);
+      scene.addEventListener('focusin', stopAutoplay);
+      scene.addEventListener('focusout', startAutoplay);
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopAutoplay(); else startAutoplay();
+      });
+
+      // resize handling
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          radius = computeRadius();
+          placeFaces();
+        }, 120);
+      });
+
+      // initialize
+      radius = computeRadius();
+      placeFaces();
+      buildDots();
+      rotateToIndex(0, false);
+      startAutoplay();
+
+      // ensure ring transitions remain consistent after initial layout
+      setTimeout(() => { ring.style.transition = `transform ${TRANSITION_MS}ms cubic-bezier(.22,.9,.36,1)`; }, 40);
+    })();
+  </script>
+</section>
 
 <section id="contact" class="contact"><div class="container contactgrid reveal">
 <div class="contactbox">
