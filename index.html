@@ -339,8 +339,8 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       <button class="carousel-btn prev" aria-label="Previous review" type="button">‹</button>
 
       <div class="carousel-viewport" aria-live="polite">
-        <div class="carousel-track" role="list">
-          <div class="slide" role="listitem">
+        <div class="carousel-track">
+          <div class="slide" role="group" aria-roledescription="slide" aria-label="Review 1 of 3">
             <div class="review">
               <div class="stars">★★★★★</div>
               <p>“As an adult student, it is quite easy to keep putting piano aside because of work and other things. J.E. really understands this and always finds ways to make the playing easier and less frustrating. It keeps me going.”</p>
@@ -348,7 +348,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
             </div>
           </div>
 
-          <div class="slide" role="listitem">
+          <div class="slide" role="group" aria-roledescription="slide" aria-label="Review 2 of 3">
             <div class="review">
               <div class="stars">★★★★★</div>
               <p>“What I appreciate most is the patience and encouragement. If I struggle with a piece, J.E. finds another way to explain it instead of simply telling me to practise more.”</p>
@@ -356,7 +356,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
             </div>
           </div>
 
-          <div class="slide" role="listitem">
+          <div class="slide" role="group" aria-roledescription="slide" aria-label="Review 3 of 3">
             <div class="review">
               <div class="stars">★★★★★</div>
               <p>“Our child has improved so much and, more importantly, has become more confident and enjoys playing piano. We are very happy with the learning experience.”</p>
@@ -368,36 +368,45 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 
       <button class="carousel-btn next" aria-label="Next review" type="button">›</button>
 
-      <div class="carousel-dots" aria-hidden="false" role="tablist"></div>
+      <div class="carousel-dots" role="tablist" aria-label="Reviews pagination"></div>
     </div>
   </div>
 
   <style>
-    /* Reviews carousel - single centered slide with side peeks */
+    /* Fade carousel: centered slide with crossfade */
     .reviews { background:#fff; padding:40px 0; }
     .reviews .heading { margin-bottom:18px; }
 
-    .reviews-carousel { position:relative; display:block; align-items:center; user-select:none; }
-    .carousel-viewport { overflow:hidden; width:100%; }
-    .carousel-track {
-      display:flex;
-      gap:20px;
-      transition:transform .45s cubic-bezier(.22,.9,.36,1);
-      will-change:transform;
-      align-items:stretch;
-      padding-bottom:4px;
-    }
-    .carousel-track.no-transition { transition: none !important; }
+    .reviews-carousel { position:relative; display:block; user-select:none; }
+    .carousel-viewport { position:relative; overflow:visible; width:100%; padding:10px 0; }
 
-    /* slide size controlled by JS */
-    .slide { flex:0 0 auto; box-sizing:border-box; cursor:pointer; }
+    .carousel-track { position:relative; min-height:220px; }
+
+    .slide {
+      position:absolute;
+      left:50%;
+      top:0;
+      transform:translateX(-50%);
+      opacity:0;
+      visibility:hidden;
+      transition: opacity .6s ease, visibility .01s linear .6s;
+      width:56%; /* JS will override with exact px width for better centering */
+      box-sizing:border-box;
+      cursor:pointer;
+    }
+    .slide.active {
+      opacity:1;
+      visibility:visible;
+      transition: opacity .6s ease;
+      z-index:2;
+    }
+
     .review {
       padding:28px;
       min-height:180px;
       background:var(--cream);
       border:1px solid var(--line);
       border-radius:8px;
-      width:100%;
       box-shadow:0 6px 18px rgba(0,0,0,.04);
     }
     .review .stars { color:#d4a017; font-size:1.05rem; margin-bottom:10px; }
@@ -418,13 +427,11 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       align-items:center;
       justify-content:center;
       cursor:pointer;
-      transition:transform .12s, background .12s;
+      transition:transform .12s, background .12s, opacity .12s;
     }
-    .carousel-btn:hover { transform:translateY(-50%) translateX(-2px); background:rgba(29,28,25,0.12); }
-    .carousel-btn:active { transform:translateY(-50%) translateX(0); }
+    .carousel-btn:hover { transform:translateY(-50%) scale(1.02); background:rgba(29,28,25,0.12); }
     .carousel-btn.prev { left:8px; }
     .carousel-btn.next { right:8px; }
-    .carousel-btn[disabled] { opacity:.35; cursor:not-allowed; transform:none; }
 
     /* dots */
     .carousel-dots { margin-top:18px; text-align:center; width:100%; display:flex; justify-content:center; gap:8px; }
@@ -434,9 +441,10 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     }
     .carousel-dot.active { background:var(--gold); }
 
-    @media (max-width:520px) {
-      .carousel-btn { width:42px; height:42px; font-size:22px; }
-    }
+    /* responsive widths (JS will set px widths, this is fallback) */
+    @media (max-width:520px) { .slide { width:92%; } }
+    @media (min-width:521px) and (max-width:899px) { .slide { width:78%; } }
+    @media (min-width:900px) { .slide { width:56%; } }
   </style>
 
   <script>
@@ -446,214 +454,165 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 
       const viewport = carousel.querySelector('.carousel-viewport');
       const track = carousel.querySelector('.carousel-track');
+      const slides = Array.from(track.children);
       const prevBtn = carousel.querySelector('.carousel-btn.prev');
       const nextBtn = carousel.querySelector('.carousel-btn.next');
       const dotsWrap = carousel.querySelector('.carousel-dots');
 
-      // original slides (before cloning)
-      const originalSlides = Array.from(track.children);
-      if (originalSlides.length === 0) return;
+      const realCount = slides.length;
+      if (realCount === 0) return;
 
-      // clone last -> front, first -> end for seamless looping
-      const firstClone = originalSlides[0].cloneNode(true);
-      const lastClone = originalSlides[originalSlides.length - 1].cloneNode(true);
-      track.appendChild(firstClone);
-      track.insertBefore(lastClone, track.firstChild);
+      // autoplay and interaction timings (requested)
+      const AUTOPLAY_MS = 2000;
+      const INTERACTION_PAUSE_MS = 4000;
+      const FADE_MS = 600; // should match CSS transition time
 
-      // now slides includes clones
-      const slides = Array.from(track.children);
-      const realCount = originalSlides.length;
-
-      // layout vars
-      let currentIndex = 1; // start at first real slide (because index 0 is lastClone)
-      let slideWidth = 0;
-      const gap = parseInt(getComputedStyle(track).gap) || 20;
-      let isAnimating = false;
-
-      // autoplay vars
-      const AUTOPLAY_MS = 4000; // change this value to speed up / slow down autoplay
+      let current = 0;
       let autoplayTimer = null;
-      const AUTOPLAY_PAUSE_ON_INTERACTION_MS = 6000; // after a manual interaction, pause this long before resuming
+      let interactionTimer = null;
+      let isTransitioning = false;
 
-      function slidePercent() {
+      // set slide widths in px and center via absolute positioning
+      function computeSlideWidth() {
         const w = window.innerWidth;
-        if (w >= 1200) return 0.56;
-        if (w >= 900) return 0.62;
-        if (w >= 520) return 0.78;
-        return 0.92;
+        let pct = 0.56;
+        if (w >= 1200) pct = 0.56;
+        else if (w >= 900) pct = 0.62;
+        else if (w >= 520) pct = 0.78;
+        else pct = 0.92;
+        const px = Math.round(viewport.clientWidth * pct);
+        slides.forEach(s => {
+          s.style.width = px + 'px';
+          // vertically align track (ensure enough height)
+          // position top is 0; track min-height to slide height
+        });
+        // set track min-height to match first slide height using a short timeout (after DOM paints)
+        setTimeout(() => {
+          const h = slides[0].offsetHeight;
+          track.style.minHeight = h + 'px';
+        }, 30);
       }
 
-      function setSlideWidths() {
-        const pct = slidePercent();
-        slideWidth = Math.round(viewport.clientWidth * pct);
-        slides.forEach(s => s.style.width = slideWidth + 'px');
-      }
-
-      function offsetCenter() {
-        return Math.round((viewport.clientWidth - slideWidth) / 2);
-      }
-
-      function setPosition(animate = true) {
-        if (!animate) {
-          track.classList.add('no-transition');
-        } else {
-          track.classList.remove('no-transition');
-        }
-        const x = -currentIndex * (slideWidth + gap) + offsetCenter();
-        track.style.transform = 'translateX(' + x + 'px)';
-        // ensure no-transition takes effect when used
-        if (!animate) track.getBoundingClientRect();
-        if (!animate) track.classList.remove('no-transition');
-      }
-
-      // build dots for the real slides only
+      // build dots
       function buildDots() {
         dotsWrap.innerHTML = '';
-        for (let i = 0; i < realCount; i++) {
-          const btn = document.createElement('button');
-          btn.className = 'carousel-dot';
-          btn.setAttribute('aria-label', 'Show review ' + (i + 1));
-          btn.setAttribute('role', 'tab');
-          btn.addEventListener('click', () => {
-            goToReal(i);
+        slides.forEach((_, i) => {
+          const b = document.createElement('button');
+          b.className = 'carousel-dot';
+          b.setAttribute('aria-label', 'Show review ' + (i + 1));
+          b.setAttribute('role', 'tab');
+          b.addEventListener('click', () => {
+            goTo(i);
             pauseAutoplayAfterInteraction();
           });
-          dotsWrap.appendChild(btn);
-        }
+          dotsWrap.appendChild(b);
+        });
       }
 
       function updateDots() {
-        const realIndex = (currentIndex - 1 + realCount) % realCount;
-        Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === realIndex));
+        Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === current));
       }
 
-      function updateButtons() {
-        // looping carousel: buttons remain enabled
-        prevBtn.disabled = false;
-        nextBtn.disabled = false;
+      function showSlide(index) {
+        if (isTransitioning || index === current) return;
+        isTransitioning = true;
+
+        const prev = slides[current];
+        const next = slides[index];
+
+        // reveal next (it will fade in via CSS)
+        prev.classList.remove('active');
+        // ensure next is visible before toggling active to trigger transition
+        next.classList.add('active');
+
+        // update ARIA
+        slides.forEach((s, i) => {
+          s.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+        });
+
+        // after fade duration, mark transition done
+        setTimeout(() => {
+          current = index;
+          updateDots();
+          isTransitioning = false;
+        }, FADE_MS + 20);
       }
 
       function goTo(index) {
-        if (isAnimating) return;
-        isAnimating = true;
-        track.classList.remove('no-transition');
-        currentIndex = index;
-        setPosition(true);
+        const i = (index + realCount) % realCount;
+        if (i === current) return;
+        showSlide(i);
       }
 
-      function goToReal(realIndex) {
-        // realIndex is 0..realCount-1 => map to slide index = realIndex + 1
-        goTo(realIndex + 1);
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
+
+      // autoplay
+      function startAutoplay() {
+        stopAutoplay();
+        autoplayTimer = setInterval(() => {
+          if (!isTransitioning) next();
+        }, AUTOPLAY_MS);
+      }
+      function stopAutoplay() {
+        if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
+      }
+      function pauseAutoplayAfterInteraction() {
+        stopAutoplay();
+        if (interactionTimer) clearTimeout(interactionTimer);
+        interactionTimer = setTimeout(() => startAutoplay(), INTERACTION_PAUSE_MS);
       }
 
-      prevBtn.addEventListener('click', () => {
-        if (isAnimating) return;
-        goTo(currentIndex - 1);
-        pauseAutoplayAfterInteraction();
+      // pause/resume on hover/focus/visibility
+      carousel.addEventListener('mouseenter', () => stopAutoplay());
+      carousel.addEventListener('mouseleave', () => startAutoplay());
+      carousel.addEventListener('focusin', () => stopAutoplay());
+      carousel.addEventListener('focusout', () => startAutoplay());
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopAutoplay(); else startAutoplay();
       });
 
-      nextBtn.addEventListener('click', () => {
-        if (isAnimating) return;
-        goTo(currentIndex + 1);
-        pauseAutoplayAfterInteraction();
-      });
+      // prev/next click handlers
+      prevBtn.addEventListener('click', () => { prev(); pauseAutoplayAfterInteraction(); });
+      nextBtn.addEventListener('click', () => { next(); pauseAutoplayAfterInteraction(); });
 
-      // when transition ends, if we're on a clone, snap to the corresponding real slide without animation
-      track.addEventListener('transitionend', () => {
-        isAnimating = false;
-        // moved to first clone (at end) -> snap to first real
-        if (currentIndex === slides.length - 1) {
-          currentIndex = 1;
-          setPosition(false);
-        }
-        // moved to last clone (at start) -> snap to last real
-        if (currentIndex === 0) {
-          currentIndex = slides.length - 2;
-          setPosition(false);
-        }
-        updateDots();
-      });
-
-      // keyboard support
+      // keyboard nav
       carousel.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') { prevBtn.click(); pauseAutoplayAfterInteraction(); }
-        if (e.key === 'ArrowRight') { nextBtn.click(); pauseAutoplayAfterInteraction(); }
+        if (e.key === 'ArrowLeft') { prev(); pauseAutoplayAfterInteraction(); }
+        if (e.key === 'ArrowRight') { next(); pauseAutoplayAfterInteraction(); }
       });
 
-      // clicking a peeked slide jumps to it
+      // clicking slide: if peek clickable later, jump to that slide
       slides.forEach((s, i) => s.addEventListener('click', (e) => {
-        // ignore clicks on interactive elements within slide
         if (e.target.closest('button, a, input, textarea')) return;
-        // map clicked index to a real slide index and navigate
-        let realIndex = (i - 1 + realCount) % realCount;
-        if (realIndex !== ((currentIndex - 1 + realCount) % realCount)) {
-          goToReal(realIndex);
+        if (i !== current) {
+          goTo(i);
           pauseAutoplayAfterInteraction();
         }
       }));
 
-      // AUTOPLAY: start/stop/pause-after-interaction
-      function startAutoplay() {
-        stopAutoplay();
-        autoplayTimer = setInterval(() => {
-          if (isAnimating) return;
-          goTo(currentIndex + 1);
-        }, AUTOPLAY_MS);
-      }
-
-      function stopAutoplay() {
-        if (autoplayTimer) {
-          clearInterval(autoplayTimer);
-          autoplayTimer = null;
-        }
-      }
-
-      let interactionPauseTimer = null;
-      function pauseAutoplayAfterInteraction() {
-        // stop autoplay and set a timer to restart after user stops interacting
-        stopAutoplay();
-        if (interactionPauseTimer) clearTimeout(interactionPauseTimer);
-        interactionPauseTimer = setTimeout(() => {
-          startAutoplay();
-        }, AUTOPLAY_PAUSE_ON_INTERACTION_MS);
-      }
-
-      // pause on hover/focus and resume when leaving/blur
-      carousel.addEventListener('mouseenter', () => { stopAutoplay(); });
-      carousel.addEventListener('mouseleave', () => { startAutoplay(); });
-      carousel.addEventListener('focusin', () => { stopAutoplay(); });
-      carousel.addEventListener('focusout', () => { startAutoplay(); });
-
-      // also pause when the page is hidden (tab inactive)
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) stopAutoplay();
-        else startAutoplay();
+      // resize handling
+      window.addEventListener('resize', () => {
+        computeSlideWidth();
       });
 
-      // resize handling
-      function resizeHandler() {
-        setSlideWidths();
-        // ensure correct position after width change (no animation)
-        setPosition(false);
-      }
-      window.addEventListener('resize', resizeHandler);
-
-      // initialize
+      // initial state: set widths, hide all then show first
+      computeSlideWidth();
       buildDots();
-      setSlideWidths();
-      // initial position show first real slide, no animation
-      setPosition(false);
+      slides.forEach((s, i) => {
+        s.classList.remove('active');
+        s.setAttribute('aria-hidden', 'true');
+        // ensure the first slide is present in DOM flow for height calculation
+        // (absolute positioned but centered)
+      });
+      // show initial slide (no animation)
+      slides[current].classList.add('active');
+      slides[current].setAttribute('aria-hidden', 'false');
       updateDots();
-      updateButtons();
 
       // start autoplay
       startAutoplay();
 
-      // safety: in case a transition never fires transitionend, clear isAnimating after a timeout
-      track.addEventListener('transitionstart', () => {
-        // if transition doesn't complete in reasonable time, reset flag
-        setTimeout(() => { isAnimating = false; }, 800);
-      });
     })();
   </script>
 </section>
