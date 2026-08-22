@@ -254,6 +254,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       width:100%;
       height:auto;
       max-height:320px;
+      aspect-ratio:16/9;
       object-fit:cover;
       object-position:center;
       border-radius:12px;
@@ -363,7 +364,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
         if (w >= 1200) pct = 0.56;
         else if (w >= 900) pct = 0.62;
         else if (w >= 520) pct = 0.78;
-        else pct = 0.92;    
+        else pct = 0.92;
         const px = Math.round(viewport.clientWidth * pct);
         slides().forEach(s => {
           s.style.width = px + 'px';
