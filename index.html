@@ -184,7 +184,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 <!-- ====== Gallery overview (paste as a single block into index.html) ====== -->
 <!-- ====== Gallery carousel section ====== -->
 
-<section id="gallery" class="white">
+ <section id="gallery" class="white">
   <div class="container">
     <div class="heading reveal">
       <div class="kicker">Gallery</div>
@@ -250,19 +250,18 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       transform:translateX(calc(-50% + 180px));
     }
 
+    /* Fixed: Core image structure forcing aspect ratio preservation */
     .gallery-image {
-  width: 100%;
-  height: 100%;
-  max-height: 320px;
-  aspect-ratio: 16/9;
-  object-fit: contain; /* Shows the full portrait image without cropping */
-  background: #f4f4f4; /* Optional: adds a light background behind portrait side gaps */
-  object-position: center;
-  border-radius: 12px;
-  display: block;
-  box-shadow: 0 12px 28px rgba(0,0,0,.12);
-}
-
+      width: 100%;
+      height: 100%;
+      max-height: 320px;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 12px;
+      display: block;
+      box-shadow: 0 12px 28px rgba(0,0,0,.12);
+    }
 
     /* buttons */
     .carousel-btn {
@@ -294,261 +293,204 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     }
     .carousel-dot.active { background:var(--gold); }
 
-   /* responsive widths */
-@media (max-width:520px) { 
-  .gallery-slide { width:92%; }
-  .gallery-slide.peek-left { transform:translateX(calc(-50% - 60px)); }
-  .gallery-slide.peek-right { transform:translateX(calc(-50% + 60px)); }
-  .gallery-image { height: 100%; max-height:240px; object-fit: cover; }
-}
+    /* responsive widths - Fixed height parameters across all 3 break states */
+    @media (max-width:520px) { 
+      .gallery-slide { width:92%; }
+      .gallery-slide.peek-left { transform:translateX(calc(-50% - 60px)); }
+      .gallery-slide.peek-right { transform:translateX(calc(-50% + 60px)); }
+      .gallery-image { height: 100%; max-height:240px; object-fit: cover; }
+    }
 
-@media (min-width:521px) and (max-width:899px) { 
-  .gallery-slide { width:78%; }
-  .gallery-slide.peek-left { transform:translateX(calc(-50% - 140px)); }
-  .gallery-slide.peek-right { transform:translateX(calc(-50% + 140px)); }
-  .gallery-image { height: 100%; max-height:280px; object-fit: cover; }
-}
+    @media (min-width:521px) and (max-width:899px) { 
+      .gallery-slide { width:78%; }
+      .gallery-slide.peek-left { transform:translateX(calc(-50% - 140px)); }
+      .gallery-slide.peek-right { transform:translateX(calc(-50% + 140px)); }
+      .gallery-image { height: 100%; max-height:280px; object-fit: cover; }
+    }
 
-@media (min-width:900px) { 
-  .gallery-slide { width:56%; }
-  .gallery-slide.peek-left { transform:translateX(calc(-50% - 180px)); }
-  .gallery-slide.peek-right { transform:translateX(calc(-50% + 180px)); }
-  .gallery-image { height: 100%; max-height:320px; object-fit: cover; }
-}
-
+    @media (min-width:900px) { 
+      .gallery-slide { width:56%; }
+      .gallery-slide.peek-left { transform:translateX(calc(-50% - 180px)); }
+      .gallery-slide.peek-right { transform:translateX(calc(-50% + 180px)); }
+      .gallery-image { height: 100%; max-height:320px; object-fit: cover; }
+    }
   </style>
 
-<script>
-  (function () {
-    const carousel = document.querySelector('.gallery-carousel');
-    if (!carousel) return;
+  <script>
+    (function () {
+      const carousel = document.querySelector('.gallery-carousel');
+      if (!carousel) return;
 
-    const viewport = carousel.querySelector('.carousel-viewport');
-    const track = carousel.querySelector('.carousel-track');
-    const prevBtn = carousel.querySelector('.carousel-btn.prev');
-    const nextBtn = carousel.querySelector('.carousel-btn.next');
-    const dotsWrap = carousel.querySelector('.carousel-dots');
+      const viewport = carousel.querySelector('.carousel-viewport');
+      const track = carousel.querySelector('.carousel-track');
+      const prevBtn = carousel.querySelector('.carousel-btn.prev');
+      const nextBtn = carousel.querySelector('.carousel-btn.next');
+      const dotsWrap = carousel.querySelector('.carousel-dots');
 
-    const MAX_IMAGES = 10;
-    const AUTOPLAY_MS = 2500;
-    const INTERACTION_PAUSE_MS = 4000;
-    const FADE_MS = 600;
+      const MAX_IMAGES = 10;
+      const AUTOPLAY_MS = 2500;
+      const INTERACTION_PAUSE_MS = 4000;
+      const FADE_MS = 600;
 
-    let current = 0;
-    let autoplayTimer = null;
-    let interactionTimer = null;
-    let isTransitioning = false;
-    let validIndices = []; // Tracks successfully loaded images
+      let current = 0;
+      let autoplayTimer = null;
+      let interactionTimer = null;
+      let isTransitioning = false;
+      let validIndices = []; // Tracks successfully loaded images
 
-    // Check if images exist and build slides asynchronously
-    function buildSlides() {
-      track.innerHTML = '';
-      validIndices = [];
+      // Check if images exist and build slides asynchronously
+      function buildSlides() {
+        track.innerHTML = '';
+        validIndices = [];
 
-      for (let i = 1; i <= MAX_IMAGES; i++) {
-        const imgPath = `images/gallery${i}.jpg`;
-        
-        // Create an image object to test loading
-        const tempImg = new Image();
-        tempImg.src = imgPath;
-        
-        tempImg.onload = () => {
-          createSlide(i, imgPath);
-        };
+        for (let i = 1; i <= MAX_IMAGES; i++) {
+          const imgPath = `images/gallery${i}.jpg`;
+          
+          // Create an image object to test loading
+          const tempImg = new Image();
+          tempImg.src = imgPath;
+          
+          tempImg.onload = () => {
+            createSlide(i, imgPath);
+          };
 
-        tempImg.onerror = () => {
-          // Image does not exist or failed to load - skip it silently
-        };
-      }
-
-      // Hide carousel container if zero images load within 2 seconds
-      setTimeout(() => {
-        if (validIndices.length === 0) {
-          track.innerHTML = '<div style="padding:40px;text-align:center;color:#999;">No images uploaded yet.</div>';
-          carousel.style.display = 'none';
+          tempImg.onerror = () => {
+            // Image does not exist or failed to load - skip it silently
+          };
         }
-      }, 2000);
-    }
 
-    // Safely insert elements only for valid image loads
-    function createSlide(index, imgPath) {
-      if (validIndices.includes(index)) return; 
-      
-      validIndices.push(index);
-
-      const slide = document.createElement('div');
-      slide.className = 'gallery-slide';
-      slide.setAttribute('role', 'group');
-      slide.setAttribute('aria-roledescription', 'slide');
-      slide.setAttribute('aria-label', `Photo ${validIndices.length} of ${MAX_IMAGES}`);
-
-      const img = document.createElement('img');
-      img.className = 'gallery-image';
-      img.src = imgPath;
-      img.alt = `Gallery photo ${index}`;
-      img.loading = 'lazy';
-
-      slide.appendChild(img);
-      track.appendChild(slide);
-
-      // Re-initialize or refresh carousel positions as valid images land
-      initCarousel();
-    }
-
-    const slides = () => Array.from(track.querySelectorAll('.gallery-slide'));
-
-    // Fixed: Keeps your beautiful CSS media widths intact, only updates track height
-    function computeSlideTrackHeight() {
-      const sliders = slides();
-      if (sliders.length === 0) return;
-
-      setTimeout(() => {
-        const activeSlide = track.querySelector('.gallery-slide.active') || sliders[0];
-        if (activeSlide) {
-          const h = activeSlide.offsetHeight;
-          if (h > 0) {
-            track.style.minHeight = h + 'px';
+        // Hide carousel container if zero images load within 2 seconds
+        setTimeout(() => {
+          if (validIndices.length === 0) {
+            track.innerHTML = '<div style="padding:40px;text-align:center;color:#999;">No images uploaded yet.</div>';
+            carousel.style.display = 'none';
           }
-        }
-      }, 50);
-    }
+        }, 2000);
+      }
 
-    function buildDots() {
-      dotsWrap.innerHTML = '';
-      slides().forEach((_, i) => {
-        const b = document.createElement('button');
-        b.className = 'carousel-dot';
-        b.setAttribute('aria-label', 'Show photo ' + (i + 1));
-        b.setAttribute('role', 'tab');
-        b.addEventListener('click', () => {
-          goTo(i);
-          pauseAutoplayAfterInteraction();
+      // Safely insert elements only for valid image loads
+      function createSlide(index, imgPath) {
+        if (validIndices.includes(index)) return; 
+        
+        validIndices.push(index);
+
+        const slide = document.createElement('div');
+        slide.className = 'gallery-slide';
+        slide.setAttribute('role', 'group');
+        slide.setAttribute('aria-roledescription', 'slide');
+        slide.setAttribute('aria-label', `Photo ${validIndices.length} of ${MAX_IMAGES}`);
+
+        const img = document.createElement('img');
+        img.className = 'gallery-image';
+        img.src = imgPath;
+        img.alt = `Gallery photo ${index}`;
+        img.loading = 'lazy';
+
+        slide.appendChild(img);
+        track.appendChild(slide);
+
+        // Re-initialize or refresh carousel positions as valid images land
+        initCarousel();
+      }
+
+      const slides = () => Array.from(track.querySelectorAll('.gallery-slide'));
+
+      // Fixed: Keeps your CSS widths intact, dynamically updates track height
+      function computeSlideTrackHeight() {
+        const sliders = slides();
+        if (sliders.length === 0) return;
+
+        setTimeout(() => {
+          const activeSlide = track.querySelector('.gallery-slide.active') || sliders[0];
+          if (activeSlide) {
+            const h = activeSlide.offsetHeight;
+            if (h > 0) {
+              track.style.minHeight = h + 'px';
+            }
+          }
+        }, 50);
+      }
+
+      function buildDots() {
+        dotsWrap.innerHTML = '';
+        slides().forEach((_, i) => {
+          const b = document.createElement('button');
+          b.className = 'carousel-dot';
+          b.setAttribute('aria-label', 'Show photo ' + (i + 1));
+          b.setAttribute('role', 'tab');
+          b.addEventListener('click', () => {
+            goTo(i);
+            pauseAutoplayAfterInteraction();
+          });
+          dotsWrap.appendChild(b);
         });
-        dotsWrap.appendChild(b);
-      });
-    }
+      }
 
-    function updateDots() {
-      if (!dotsWrap.children.length) return;
-      Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === current));
-    }
+      function updateDots() {
+        if (!dotsWrap.children.length) return;
+        Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === current));
+      }
 
-    function updatePeek() {
-      const sliders = slides();
-      const total = sliders.length;
-      if (total === 0) return;
+      function updatePeek() {
+        const sliders = slides();
+        const total = sliders.length;
+        if (total === 0) return;
+        
+        sliders.forEach((s, i) => {
+          s.classList.remove('active', 'peek-left', 'peek-right');
+          if (i === current) {
+            s.classList.add('active');
+          } else if (i === (current - 1 + total) % total) {
+            s.classList.add('peek-left');
+          } else if (i === (current + 1) % total) {
+            s.classList.add('peek-right');
+          }
+        });
+      }
+
+      function showSlide(index) {
+        const sliders = slides();
+        const total = sliders.length;
+        if (total === 0 || isTransitioning || index === current) return;
+        isTransitioning = true;
+
+        current = index;
+        updatePeek();
+        updateDots();
+        computeSlideTrackHeight(); // Adjust height dynamically across breakpoints
+
+        sliders.forEach((s, i) => {
+          s.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+        });
+
+        setTimeout(() => {
+          isTransitioning = false;
+        }, FADE_MS + 20);
+      }
+
+      function goTo(index) {
+        const sliders = slides();
+        const total = sliders.length;
+        if (total === 0) return;
+        const i = (index + total) % total;
+        if (i === current) return;
+        showSlide(i);
+      }
+
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
+
+      function startAutoplay() {
+        stopAutoplay();
+        autoplayTimer = setInterval(() => {
+          if (!isTransitioning) next();
+        }, AUTOPLAY_MS);
+      }
       
-      sliders.forEach((s, i) => {
-        s.classList.remove('active', 'peek-left', 'peek-right');
-        if (i === current) {
-          s.classList.add('active');
-        } else if (i === (current - 1 + total) % total) {
-          s.classList.add('peek-left');
-        } else if (i === (current + 1) % total) {
-          s.classList.add('peek-right');
-        }
-      });
-    }
-
-    function showSlide(index) {
-      const sliders = slides();
-      const total = sliders.length;
-      if (total === 0 || isTransitioning || index === current) return;
-      isTransitioning = true;
-
-      current = index;
-      updatePeek();
-      updateDots();
-      computeSlideTrackHeight(); // Adjust height if images scale differently across breakpoints
-
-      sliders.forEach((s, i) => {
-        s.setAttribute('aria-hidden', i === index ? 'false' : 'true');
-      });
-
-      setTimeout(() => {
-        isTransitioning = false;
-      }, FADE_MS + 20);
-    }
-
-    function goTo(index) {
-      const sliders = slides();
-      const total = sliders.length;
-      if (total === 0) return;
-      const i = (index + total) % total;
-      if (i === current) return;
-      showSlide(i);
-    }
-
-    function next() { goTo(current + 1); }
-    function prev() { goTo(current - 1); }
-
-    function startAutoplay() {
-      stopAutoplay();
-      autoplayTimer = setInterval(() => {
-        if (!isTransitioning) next();
-      }, AUTOPLAY_MS);
-    }
-    
-    function stopAutoplay() {
-      if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
-    }
-    
-    function pauseAutoplayAfterInteraction() {
-      stopAutoplay();
-      if (interactionTimer) clearTimeout(interactionTimer);
-      interactionTimer = setTimeout(() => startAutoplay(), INTERACTION_PAUSE_MS);
-    }
-
-    carousel.addEventListener('mouseenter', () => stopAutoplay());
-    carousel.addEventListener('mouseleave', () => startAutoplay());
-    carousel.addEventListener('focusin', () => stopAutoplay());
-    carousel.addEventListener('focusout', () => startAutoplay());
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) stopAutoplay(); else startAutoplay();
-    });
-
-    prevBtn.addEventListener('click', () => { prev(); pauseAutoplayAfterInteraction(); });
-    nextBtn.addEventListener('click', () => { next(); pauseAutoplayAfterInteraction(); });
-
-    carousel.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') { prev(); pauseAutoplayAfterInteraction(); }
-      if (e.key === 'ArrowRight') { next(); pauseAutoplayAfterInteraction(); }
-    });
-
-    track.addEventListener('click', (e) => {
-      const slide = e.target.closest('.gallery-slide');
-      if (!slide) return;
-      const idx = slides().indexOf(slide);
-      if (idx !== -1 && idx !== current) {
-        goTo(idx);
-        pauseAutoplayAfterInteraction();
-      }
-    });
-
-    window.addEventListener('resize', () => {
-      computeSlideTrackHeight();
-    });
-
-    function initCarousel() {
-      const sliders = slides();
-      if (sliders.length === 0) return;
-
-      buildDots();
-      updatePeek();
-      if (sliders[current]) {
-        sliders[current].setAttribute('aria-hidden', 'false');
-      }
-      updateDots();
-      computeSlideTrackHeight();
-      startAutoplay();
-    }
-
-    // Run verification scan
-    buildSlides();
-
-  })();
+      function stopAutoplay() {
+if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }}function pauseAutoplayAfterInteraction() {stopAutoplay();if (interactionTimer) clearTimeout(interactionTimer);interactionTimer = setTimeout(() => startAutoplay(), INTERACTION_PAUSE_MS);}carousel.addEventListener('mouseenter', () => stopAutoplay());carousel.addEventListener('mouseleave', () => startAutoplay());carousel.addEventListener('focusin', () => stopAutoplay());carousel.addEventListener('focusout', () => startAutoplay());document.addEventListener('visibilitychange', () => {if (document.hidden) stopAutoplay(); else startAutoplay();});prevBtn.addEventListener('click', () => { prev(); pauseAutoplayAfterInteraction(); });nextBtn.addEventListener('click', () => { next(); pauseAutoplayAfterInteraction(); });carousel.addEventListener('keydown', (e) => {if (e.key === 'ArrowLeft') { prev(); pauseAutoplayAfterInteraction(); }if (e.key === 'ArrowRight') { next(); pauseAutoplayAfterInteraction(); }});track.addEventListener('click', (e) => {const slide = e.target.closest('.gallery-slide');if (!slide) return;const idx = slides().indexOf(slide);if (idx !== -1 && idx !== current) {goTo(idx);pauseAutoplayAfterInteraction();}});window.addEventListener('resize', () => {computeSlideTrackHeight();});function initCarousel() {const sliders = slides();if (sliders.length === 0) return;buildDots();updatePeek();if (sliders[current]) {sliders[current].setAttribute('aria-hidden', 'false');}updateDots();computeSlideTrackHeight();startAutoplay();}// Run verification scanbuildSlides();})();
 </script>
-
+     
 </section>
 <!-- ====== End gallery carousel ====== -->
     
