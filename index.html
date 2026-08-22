@@ -1,617 +1,377 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>J.E. Piano Studio | Piano Lessons in Klang</title>
 <meta name="description" content="J.E. Piano Studio offers personalised one-to-one piano lessons in Taman Andalas Jaya, Klang for children, teenagers and adults.">
-
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-
 <style>
-:root{
-  --cream:#f7f4ee;
-  --cream2:#eee7db;
-  --white:#fff;
-  --black:#1d1c19;
-  --dark:#24231f;
-  --grey:#6e6a63;
-  --gold:#ae8751;
-  --gold2:#d7bd96;
-  --line:#ded7ca;
-  --max:1180px;
-  --carousel-radius: 300px; /* overwritten by JS on small screens */
-  --carousel-duration-ms: 2000; /* one slide interval (used to compute rotation speed) */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+:root{--cream:#f7f4ee;--cream2:#eee7db;--white:#fff;--black:#1d1c19;--dark:#24231f;--grey:#6e6a63;--gold:#ae8751;--gold2:#d7bd96;--line:#ded7ca;--max:1180px}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--black);line-height:1.7}a{text-decoration:none;color:inherit}h1,h2,h3{font-family:"Playfair Display",serif;font-weight:600;line-height:1.12}h1{font-size:clamp(3rem,7vw,6.1rem);letter-spacing:-3px}h2{font-size:clamp(2.35rem,4.5vw,4rem);letter-spacing:-1.5px}h3{font-size:1.4rem}p{color:var(--grey)}.container{width:min(var(--max),calc(100% - 48px));margin:auto}
+.nav{position:fixed;z-index:1000;top:0;left:0;width:100%;padding:17px 0;color:#fff;transition:.3s}.nav.scrolled{background:rgba(29,28,25,.97);padding:12px 0;box-shadow:0 6px 30px rgba(0,0,0,.18)}.navrow{display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:11px;color:#fff}.brandmark{width:43px;height:43px;border:1px solid var(--gold2);border-radius:50%;display:grid;place-items:center;font-family:"Playfair Display",serif;font-size:18px;line-height:1;color:var(--gold2)}.brandtext{font-family:"Playfair Display",serif;font-size:1.15rem;line-height:1.05}.brandtext small{display:block;font-family:"DM Sans",sans-serif;font-size:.52rem;letter-spacing:.19em;text-transform:uppercase;color:var(--gold2);margin-top:5px}.links{display:flex;gap:26px}.links a{font-size:.78rem;color:#fff}.links a:hover{color:var(--gold2)}.menu{display:none;border:0;background:none;color:#fff;font-size:27px;cursor:pointer}.mobile{position:fixed;z-index:999;top:0;right:-100%;height:100vh;width:min(330px,85vw);padding:105px 34px 40px;background:var(--dark);transition:.35s;box-shadow:-10px 0 35px rgba(0,0,0,.2)}.mobile.open{right:0}.mobile a{display:block;color:#fff;padding:15px 0;border-bottom:1px solid #45433e;font-size:.9rem}.close{position:absolute;right:25px;top:22px;color:#fff;background:none;border:0;font-size:25px}
+.hero{min-height:850px;display:flex;align-items:flex-end;color:#fff;background:linear-gradient(90deg,rgba(13,12,10,.9),rgba(13,12,10,.42)),url("https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?auto=format&fit=crop&w=2200&q=90") center/cover}.heroContent{padding:185px 0 105px;max-width:850px}.eyebrow,.kicker{font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:var(--gold);margin-bottom:18px}.hero .eyebrow{color:var(--gold2)}.hero p{color:#eeeae3;max-width:670px;font-size:1.08rem;margin:28px 0 33px}.btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 25px;font-size:.8rem;font-weight:700;transition:.25s}.btn:hover{transform:translateY(-3px)}.light{background:#fff;color:var(--black)}.gold{background:var(--gold);color:#fff}.gold:hover{background:#96703e}
+/* ================= STATS ================= */
+
+.stats {
+    background: var(--dark);
+    color: white;
+    padding: 32px 0;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--black);line-height:1.7}
-a{text-decoration:none;color:inherit}
-.container{width:min(var(--max),calc(100% - 80px));margin:0 auto}
-
-/* Header / nav */
-.nav{position:fixed;z-index:1000;top:0;left:0;width:100%;padding:17px 0;color:#fff;transition:.3s}
-.nav.scrolled{background:rgba(29,28,25,.97);padding:12px 0;box-shadow:0 6px 30px rgba(0,0,0,.18)}
-.nav .navrow{display:flex;align-items:center;justify-content:space-between;gap:20px}
-.brand-logo{width:48px;height:48px;object-fit:contain;border-radius:6px;display:inline-block}
-.brand{display:flex;align-items:center;gap:10px}
-.links{display:flex;gap:18px}
-.links a{color:inherit;font-weight:600;font-size:.95rem}
-.menu{display:none;background:transparent;border:0;color:var(--black);font-size:20px}
-
-/* Hero */
-.hero{min-height:850px;display:flex;align-items:flex-end;color:#fff;background:linear-gradient(90deg,rgba(13,12,10,.9),rgba(13,12,10,.42)),url("https://images.unsplash.com/photo-1520523839897-bd0b52f9f0ff?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=9b2c3b2f4d9ad0a1b8b2c99b") center/cover;padding:160px 0 80px}
-.heroContent{max-width:760px}
-.eyebrow{font-size:.95rem;color:var(--gold);margin-bottom:12px}
-h1{font-family:"Playfair Display",serif;font-size:3.9rem;line-height:1;letter-spacing:-1px;margin-bottom:14px}
-.btn{display:inline-block;padding:12px 22px;border-radius:8px;background:var(--black);color:#fff;font-weight:700}
-
-/* Sections */
-section{padding:110px 0}
-.heading{max-width:720px;margin-bottom:50px}
-.kicker{font-weight:700;text-transform:uppercase;color:var(--gold);font-size:.75rem;margin-bottom:6px}
-.lead{font-size:1.05rem;color:#45413b}
-
-/* About */
-.aboutgrid{display:grid;grid-template-columns:.85fr 1.15fr;gap:95px;align-items:center}
-.aboutphoto{min-height:560px;background:url("images/instructor.jpg") center/cover;background-size:cover;border-radius:8px}
-
-/* Features */
-.featuregrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.feature{padding:35px;min-height:220px;border:1px solid var(--line);background:var(--white)}
-
-/* Courses, cards, journey etc - keeping basic styles for brevity */
-.white{background:#fff}
-.approach{background:var(--cream2)}
-.courses{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.course{border:1px solid var(--line);padding:28px;min-height:260px;display:flex;flex-direction:column;background:var(--cream)}
-.dark{background:var(--dark);color:#fff}
-.journey{display:grid;grid-template-columns:repeat(4,1fr);margin-top:45px;gap:14px}
-.journeyitem{padding:30px;border:1px solid #46443f;background:transparent}
-
-/* Gallery small section & utility from original file ... (kept minimal) */
-.gallery{display:grid;grid-template-columns:2fr 1fr 1fr;grid-auto-rows:225px;gap:12px}
-.gitem{position:relative;overflow:hidden;background:#d8d2c8}
-
-/* Contact and footer simplified */
-.contact{background:var(--cream2)}
-.contactbox,.mapbox{background:#fff;border:1px solid var(--line);padding:40px;border-radius:8px}
-footer{background:var(--dark);color:#fff;padding:50px 0}
-
-/* Reveal */
-.reveal{opacity:0;transform:translateY(22px);transition:.75s}
-.reveal.show{opacity:1;transform:none}
-
-/* Responsive */
-@media(max-width:900px){
-  .container{width:calc(100% - 48px)}
-  .links{display:none}
-  .menu{display:block}
-  .hero{min-height:730px}
-  .heroContent{padding:120px 0 60px}
-}
-@media(max-width:520px){
-  h1{font-size:2.7rem}
-  .courses{grid-template-columns:1fr}
-  .journey{grid-template-columns:1fr}
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    text-align: center;
 }
 
-/* =========================
-   3D REVIEWS CAROUSEL STYLES
-   ========================= */
-
-/* scene wrapper */
-.reviews { background:#fff; padding:40px 0; }
-.reviews .container { width:min(var(--max),calc(100% - 48px)); }
-.reviews-heading { margin-bottom:22px }
-
-/* 3D scene area */
-.scene-3d {
-  width:100%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:28px 0 8px;
-  position:relative;
+.stat {
+    border-right: 1px solid #484640;
 }
 
-/* viewport controls visual area */
-.carousel-3d {
-  width: min(760px, 92%);
-  height: 260px;
-  perspective: 1200px;
-  -webkit-perspective: 1200px;
-  position:relative;
+.stat:last-child {
+    border-right: none;
 }
 
-/* ring that contains cards */
-.ring {
-  position:relative;
-  width:100%;
-  height:100%;
-  transform-style:preserve-3d;
-  will-change: transform;
+.stat strong {
+    display: block;
+    font-family: "Playfair Display", serif;
+    font-size: 1.8rem;
 }
 
-/* each card face */
-.face {
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform-style:preserve-3d;
-  transform-origin:center center;
-  width:68%; /* base width, JS will set px for precise centering */
-  max-width:720px;
-  min-width:260px;
-  height:70%;
-  background:var(--cream);
-  border-radius:10px;
-  padding:22px;
-  box-shadow:0 12px 30px rgba(0,0,0,.12);
-  border:1px solid var(--line);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  left:50%;
-  top:50%;
-  transform: translate(-50%, -50%);
-  backface-visibility:hidden;
-  cursor:pointer;
+.stat span {
+    color: #aaa69e;
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
 }
+    
+section{padding:110px 0}.aboutgrid{display:grid;grid-template-columns:.85fr 1.15fr;gap:95px;align-items:center}.aboutphoto{min-height:560px;background:url("images/instructor.jpg") center/cover}
 
-/* highlight for front face */
-.face-front {
-  box-shadow:0 18px 40px rgba(0,0,0,.18);
-  transform-style:preserve-3d;
+/* Logo size and alignment */
+.brand-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 6px; /* optional */
+  display: inline-block;
 }
-
-/* content inside review */
-.face .stars { color:#d4a017; font-size:1.05rem; margin-bottom:10px; }
-.face p { margin-bottom:14px; color:#2e2b26; }
-.face strong { display:block; margin-top:8px; color:#1d1c19 }
-
-/* controls */
-.carousel-control {
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  z-index:40;
-  background:rgba(13,12,10,.06);
-  border:0;
-  width:44px;
-  height:44px;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:22px;
-  cursor:pointer;
-}
-.carousel-control:hover { transform:translateY(-50%) scale(1.03); background:rgba(13,12,10,.12); }
-.control-prev { left:8px; }
-.control-next { right:8px; }
-
-/* pagination dots */
-.carousel-dots { margin-top:18px; text-align:center; width:100%; display:flex; justify-content:center; gap:8px; }
-.dot { width:10px; height:10px; border-radius:50%; background:rgba(0,0,0,0.12); cursor:pointer; border:2px solid transparent; }
-.dot.active { background:var(--gold); }
-
-/* small screens adjustments */
-@media (max-width:700px) {
-  .carousel-3d { height:220px; }
-  .face { width:86%; height:74%; }
-}
+.brand { display:flex; align-items:center; gap:10px; }    
+    
+.abouttext p{margin-bottom:16px}.lead{font-size:1.1rem;color:#45413b}.quote{margin-top:28px;padding:22px 0 22px 23px;border-left:2px solid var(--gold);font-family:"Playfair Display",serif;font-size:1.25rem;color:#39362f}
+.white{background:#fff}.heading{max-width:720px;margin-bottom:50px}.featuregrid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line)}.feature{padding:35px;min-height:220px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transition:.25s}.feature:hover{background:#fbf9f5}.feature:nth-child(3n){border-right:0}.feature:nth-last-child(-n+3){border-bottom:0}.num{color:var(--gold);font-size:.7rem;font-weight:700}.feature h3{margin:12px 0 9px}.feature p{font-size:.86rem}
+.approach{background:var(--cream2)}.approachgrid{display:grid;grid-template-columns:.8fr 1.2fr;gap:80px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.card{background:rgba(255,255,255,.55);border:1px solid var(--line);padding:25px;transition:.25s}.card:hover{background:#fff;transform:translateY(-3px)}.card h3{font-size:1.1rem;margin-bottom:7px}.card p{font-size:.82rem}
+.courses{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.course{border:1px solid var(--line);padding:38px;min-height:405px;display:flex;flex-direction:column;background:var(--cream);transition:.3s}.course:hover{transform:translateY(-6px);box-shadow:0 18px 45px rgba(0,0,0,.08)}.tag{color:var(--gold);font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.course h3{font-size:1.65rem;margin:18px 0 14px}.course p{font-size:.86rem;margin-bottom:12px}.for{margin-top:auto;border-top:1px solid var(--line);padding-top:18px;font-size:.74rem;color:var(--black)}
+.dark{background:var(--dark);color:#fff}.dark .heading p{color:#bbb7af}.journey{display:grid;grid-template-columns:repeat(4,1fr);margin-top:45px}.journeyitem{padding:30px;border:1px solid #46443f;transition:.25s}.journeyitem:hover{background:#2c2b27}.journeyicon{color:var(--gold2);font-size:1.6rem}.journeyitem h3{font-size:1.25rem;margin:12px 0 6px}.journeyitem p{font-size:.8rem}
+.gallery{display:grid;grid-template-columns:2fr 1fr 1fr;grid-auto-rows:225px;gap:12px}.gitem{position:relative;overflow:hidden;background:#d8d2c8}.gitem.big{grid-row:span 2}.gitem img{width:100%;height:100%;object-fit:cover;transition:.6s}.gitem:hover img{transform:scale(1.05)}.caption{position:absolute;bottom:0;left:0;width:100%;padding:27px 17px 13px;color:#fff;font-size:.77rem;font-weight:600;background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.reviews{background:#fff}.reviewgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.review{padding:30px;min-height:245px;background:var(--cream);transition:.25s}.review:hover{transform:translateY(-4px)}.stars{color:var(--gold);letter-spacing:3px;margin-bottom:16px}.review p{font-family:"Playfair Display",serif;font-size:1rem;color:#403c36;margin-bottom:18px}.review strong{font-size:.76rem}
+.contact{background:var(--cream2)}.contactgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}.contactbox,.mapbox{background:#fff;border:1px solid var(--line);padding:40px}.contactbox h2{font-size:2.8rem}.details{margin:28px 0}.detail{display:flex;gap:15px;padding:15px 0;border-bottom:1px solid var(--line)}.detail:first-child{border-top:1px solid var(--line)}.icon{width:25px;color:var(--gold);font-weight:700}.detail strong{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:.09em}.detail span{font-size:.9rem;color:var(--grey)}.mapbox{padding:0;overflow:hidden;min-height:410px;display:flex;flex-direction:column}.maparea{flex:1;min-height:310px;background:linear-gradient(135deg,#ded7ca,#f5f0e7);position:relative;display:grid;place-items:center;text-align:center;padding:30px}.pin{width:62px;height:62px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--gold);display:grid;place-items:center;margin:0 auto 20px;box-shadow:0 10px 25px rgba(0,0,0,.12)}.pin span{transform:rotate(45deg);color:#fff;font-size:24px}.maptitle{font-family:"Playfair Display",serif;font-size:1.5rem}.mapsmall{font-size:.8rem;color:var(--grey);margin:7px 0 18px}.mapbtn{background:var(--dark);color:#fff;padding:12px 19px;font-size:.75rem;font-weight:700}.mapfoot{padding:15px 20px;font-size:.72rem;color:var(--grey);border-top:1px solid var(--line)}
+footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align-items:center;justify-content:space-between;gap:30px}.foot p{color:#aaa69e;font-size:.76rem}.foot .brand{display:inline-flex}
+.reveal{opacity:0;transform:translateY(22px);transition:.75s}.reveal.show{opacity:1;transform:none}
+@media(max-width:900px){.container{width:calc(100% - 32px)}.links{display:none}.menu{display:block}.hero{min-height:730px}.heroContent{padding:160px 0 75px}.statsgrid{grid-template-columns:1fr}.stat{border:0;border-bottom:1px solid #484640;padding:12px}.stat:last-child{border:0}section{padding:78px 0}.aboutgrid,.approachgrid,.contactgrid{grid-template-columns:1fr;gap:35px}.aboutphoto{min-height:420px}.featuregrid{grid-template-columns:1fr}.feature{border-right:0!important;border-bottom:1px solid var(--line)!important}.feature:last-child{border-bottom:0!important}.courses{grid-template-columns:1fr}.course{min-height:350px}.journey{grid-template-columns:repeat(2,1fr)}.gallery{grid-template-columns:1fr;grid-auto-rows:auto;gap:16px}.gitem,.gitem.big{grid-row:auto;height:auto;min-height:270px}.gitem img{height:270px}.caption{padding-top:45px}.reviewgrid{grid-template-columns:1fr}.contactbox,.mapbox{padding:30px}.mapbox{min-height:380px}.maparea{min-height:300px}.foot{flex-direction:column;align-items:flex-start}}
+@media(max-width:520px){h1{font-size:3.15rem;letter-spacing:-1.5px}.hero{min-height:690px}.hero p{font-size:.98rem}.btn{width:100%}.cards{grid-template-columns:1fr}.journey{grid-template-columns:1fr}.gitem,.gitem.big{min-height:0}.gitem img{height:250px}.contactbox h2{font-size:2.4rem}}
 </style>
 </head>
 <body>
 
 <header class="nav" id="nav">
-  <div class="container navrow">
-    <a href="#" class="brand">
+<div class="container navrow">
+ <a href="#" class="brand">
       <img src="images/logo.png" alt="JE Piano Studio logo" class="brand-logo">
       <div class="brandtext">
         <span class="brandname">J.E. Piano Studio</span>
         <small>Piano Lessons · Klang</small>
       </div>
     </a>
-
-    <nav class="links" aria-label="Main navigation">
-      <a href="#about">About</a>
-      <a href="#approach">Approach</a>
-      <a href="#courses">Lessons</a>
-      <a href="#journey">Students</a>
-      <a href="#gallery">Gallery</a>
-      <a href="#reviews">Reviews</a>
-      <a href="#contact">Contact</a>
-    </nav>
-
-    <button class="menu" id="menu" aria-label="Open menu">☰</button>
-  </div>
+<nav class="links">
+<a href="#about">About</a><a href="#approach">Approach</a><a href="#courses">Lessons</a><a href="#journey">Students</a><a href="#gallery">Gallery</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a>
+</nav>
+<button class="menu" id="menu" aria-label="Open menu">☰</button>
+</div>
 </header>
 
-<div class="mobile" id="mobile" style="display:none;">
-  <button class="close" id="close" aria-label="Close menu">×</button>
-  <a href="#about">ABOUT</a><a href="#approach">APPROACH</a><a href="#courses">LESSONS</a><a href="#journey">STUDENTS</a><a href="#gallery">GALLERY</a><a href="#reviews">REVIEWS</a><a href="#contact">CONTACT</a>
+<div class="mobile" id="mobile">
+<button class="close" id="close" aria-label="Close menu">×</button>
+<a href="#about">ABOUT</a><a href="#approach">APPROACH</a><a href="#courses">LESSONS</a><a href="#journey">STUDENTS</a><a href="#gallery">GALLERY</a><a href="#reviews">REVIEWS</a><a href="#contact">CONTACT</a>
 </div>
 
 <section class="hero">
-  <div class="container heroContent">
-    <div class="eyebrow">Private Piano Studio · Taman Andalas Jaya, Klang</div>
-    <h1>Learn Piano.<br>Build Confidence.<br>Find Your Music.</h1>
-    <p class="lead">Personalised one-to-one piano lessons for children, teenagers and adults — shaped around your ability, learning pace, goals and musical interests.</p>
-    <a class="btn light" href="#contact">Enquire About Lessons</a>
-  </div>
+<div class="container heroContent">
+<div class="eyebrow">Private Piano Studio · Taman Andalas Jaya, Klang</div>
+<h1>Learn Piano.<br>Build Confidence.<br>Find Your Music.</h1>
+<p>Personalised one-to-one piano lessons for children, teenagers and adults — shaped around your ability, learning pace, goals and musical interests.</p>
+<a class="btn light" href="#contact">Enquire About Lessons</a>
+</div>
 </section>
 
-<!-- ... other sections (stats, about, approach, courses, journey, gallery) kept as in original ... -->
+<!-- ================= STATS ================= -->
+
 <section class="stats">
-  <div class="container stats-grid">
-    <div class="stat"><strong>20+ Years</strong><span>Teaching Experience</span></div>
-    <div class="stat"><strong>300+ Students</strong><span>Students Taught</span></div>
-    <div class="stat"><strong>Ages 5–60+</strong><span>Different Learners</span></div>
-  </div>
-</section>
 
-<section id="about">
-  <div class="container aboutgrid reveal">
-    <div class="aboutphoto"></div>
-    <div class="abouttext">
-      <div class="kicker">Meet Your Instructor</div>
-      <h2>Experienced.<br>Qualified.<br>Dedicated.</h2>
-      <p class="lead"><strong>J.E. Cheng</strong> holds a Master's Degree in Music, specialising in Piano Pedagogy and Piano Performance, as well as the Licentiate Diploma in Piano Performance (LTCL).</p>
-      <p>With more than 20 years of teaching experience, J.E. has taught students from as young as 5 years old to adults in their 60s.</p>
-      <p>He also has experience working with students with different learning needs, adapting his approach according to each student's ability, pace and goals.</p>
-      <div class="quote">“Good teaching is not about making every student learn the same way. It is about finding the way that works best for each student.”</div>
-    </div>
-  </div>
-</section>
+    <div class="container stats-grid">
 
-<section class="white">
-  <div class="container">
-    <div class="heading reveal"><div class="kicker">Why J.E. Piano Studio</div><h2>More than just learning to play.</h2><p class="lead">The goal is not simply to teach students how to play the piano, but to help them find their musical voice.</p></div>
-    <div class="featuregrid reveal">
-      <div class="feature"><div class="num">01</div><h3>One-to-One Attention</h3><p>Every lesson is conducted individually.</p></div>
-      <div class="feature"><div class="num">02</div><h3>Individualised Teaching</h3><p>Teaching methods are adapted to each student.</p></div>
-      <div class="feature"><div class="num">03</div><h3>20+ Years Experience</h3><p>Experience teaching learners of all ages.</p></div>
-    </div>
-  </div>
-</section>
-
-<section id="approach" class="approach">
-  <div class="container approachgrid reveal">
-    <div><div class="kicker">A Different Approach</div><h2>Perhaps you're looking for something different?</h2></div>
-    <div class="cards">
-      <div class="card"><h3>Previous teacher wasn't the right fit?</h3><p>Sometimes the right teacher-student relationship makes all the difference.</p></div>
-      <div class="card"><h3>Your previous teacher stopped teaching?</h3><p>Continue your musical journey with a teacher who can work from your existing level.</p></div>
-    </div>
-  </div>
-</section>
-
-<section id="courses" class="white">
-  <div class="container">
-    <div class="heading reveal"><div class="kicker">Piano Programmes</div><h2>Lessons shaped around the learner.</h2></div>
-    <div class="courses reveal">
-      <article class="course"><div class="tag">01 · All Ages</div><h3>Basic One-to-One Piano Lessons</h3></article>
-      <article class="course"><div class="tag">02 · Teenagers</div><h3>Teen Piano — Focused & Accelerated</h3></article>
-      <article class="course"><div class="tag">03 · Adults</div><h3>Adult Piano Lessons</h3></article>
-    </div>
-  </div>
-</section>
-
-<section id="journey" class="dark">
-  <div class="container">
-    <div class="heading reveal"><div class="kicker">Student Journey</div><h2>Every achievement matters.</h2><p>From the first lesson to the concert stage, every student has a different journey.</p></div>
-    <div class="journey reveal">
-      <div class="journeyitem"><div class="journeyicon">★</div><h3>Personal Milestones</h3></div>
-      <div class="journeyitem"><div class="journeyicon">♫</div><h3>Performances</h3></div>
-      <div class="journeyitem"><div class="journeyicon">♪</div><h3>Examinations</h3></div>
-      <div class="journeyitem"><div class="journeyicon">♛</div><h3>Competitions</h3></div>
-    </div>
-  </div>
-</section>
-
-<!-- =========================
-     REVIEWS: 3D ROTATING CAROUSEL
-     ========================= -->
-<section id="reviews" class="reviews">
-  <div class="container">
-    <div class="reviews-heading reveal">
-      <div class="kicker">Reviews</div>
-      <h2>What students &amp; parents say.</h2>
-    </div>
-
-    <div class="scene-3d reveal" id="reviews-3d">
-      <div class="carousel-3d" aria-roledescription="carousel" role="region" aria-label="Student and parent reviews">
-        <div class="ring" id="ring">
-          <!-- Faces: these are the review cards; you can add more and the script auto-calculates placement -->
-          <div class="face" data-index="0" tabindex="0" aria-hidden="false">
-            <div class="stars">★★★★★</div>
-            <p>“As an adult student, it is quite easy to keep putting piano aside because of work and other things. J.E. really understands this and always finds ways to make the playing easier and less frustrating. It keeps me going.”</p>
-            <strong>— Michelle</strong>
-          </div>
-
-          <div class="face" data-index="1" tabindex="0" aria-hidden="true">
-            <div class="stars">★★★★★</div>
-            <p>“What I appreciate most is the patience and encouragement. If I struggle with a piece, J.E. finds another way to explain it instead of simply telling me to practise more.”</p>
-            <strong>— Elaine</strong>
-          </div>
-
-          <div class="face" data-index="2" tabindex="0" aria-hidden="true">
-            <div class="stars">★★★★★</div>
-            <p>“Our child has improved so much and, more importantly, has become more confident and enjoys playing piano. We are very happy with the learning experience.”</p>
-            <strong>— Parent</strong>
-          </div>
+        <div class="stat">
+            <strong>20+ Years</strong>
+            <span>Teaching Experience</span>
         </div>
 
-        <button class="carousel-control control-prev" id="prev" aria-label="Previous review" type="button">‹</button>
-        <button class="carousel-control control-next" id="next" aria-label="Next review" type="button">›</button>
-      </div>
-
-      <div class="carousel-dots" id="dots" role="tablist" aria-label="Reviews pagination" style="margin-top:14px"></div>
-    </div>
-
-  </div>
-</section>
-
-<section id="contact" class="contact">
-  <div class="container contactgrid reveal">
-    <div class="contactbox">
-      <div class="kicker">Visit / Enquire</div>
-      <h2>Let's talk about your piano journey.</h2>
-      <div class="details">
-        <div class="detail"><div class="icon">⌖</div><div><strong>Location</strong><span>Taman Andalas Jaya, 41200 Klang, Selangor</span></div></div>
-        <div class="detail"><div class="icon">☎</div><div><strong>Phone</strong><span>016-345 3132</span></div></div>
-      </div>
-      <a class="btn gold" href="https://wa.me/60163453132" target="_blank" rel="noopener">WhatsApp J.E. Piano Studio</a>
-    </div>
-
-    <div class="mapbox">
-      <div class="maparea">
-        <div>
-          <div class="pin"><span>♪</span></div>
-          <div class="maptitle">J.E. Piano Studio</div>
-          <div class="mapsmall">Taman Andalas Jaya · 41200 Klang</div>
-          <a class="mapbtn" href="https://www.google.com/maps/search/?api=1&query=J.E.%20Piano%20Studio%20Taman%20Andalas%20Jaya%20Klang" target="_blank" rel="noopener">OPEN IN GOOGLE MAPS</a>
+        <div class="stat">
+            <strong>300+ Students</strong>
+            <span>Students Taught</span>
         </div>
-      </div>
-      <div class="mapfoot">Taman Andalas Jaya · 41200 Klang, Selangor</div>
+
+        <div class="stat">
+            <strong>Ages 5–60+</strong>
+            <span>Different Learners</span>
+        </div>
+
+    </div>
+
+</section>
+
+<section id="about"><div class="container aboutgrid reveal">
+<div class="aboutphoto"></div>
+<div class="abouttext">
+<div class="kicker">Meet Your Instructor</div>
+<h2>Experienced.<br>Qualified.<br>Dedicated.</h2><br>
+<p class="lead"><strong>J.E. Cheng</strong> holds a Master's Degree in Music, specialising in Piano Pedagogy and Piano Performance, as well as the Licentiate Diploma in Piano Performance (LTCL) from Trinity College London with Distinction.</p>
+<p>With more than 20 years of teaching experience, J.E. has taught students from as young as 5 years old to adults in their 60s.</p>
+<p>He also has experience working with students with different learning needs, adapting his approach according to each student's ability, pace and goals.</p>
+<div class="quote">“Good teaching is not about making every student learn the same way. It is about finding the way that works best for each student.”</div>
+</div></div></section>
+
+<section class="white"><div class="container">
+<div class="heading reveal"><div class="kicker">Why J.E. Piano Studio</div><h2>More than just learning to play.</h2><p class="lead">The goal is not simply to teach students how to play the piano, but to help them understand music, build confidence and develop a lasting interest in learning.</p></div>
+<div class="featuregrid reveal">
+<div class="feature"><div class="num">01</div><h3>One-to-One Attention</h3><p>Every lesson is conducted individually, allowing the teacher to focus completely on the student's needs.</p></div>
+<div class="feature"><div class="num">02</div><h3>Individualised Teaching</h3><p>Teaching methods are adapted to the student's ability, pace, personality, interests and goals.</p></div>
+<div class="feature"><div class="num">03</div><h3>20+ Years Experience</h3><p>Experience teaching children, teenagers, adults and students with different learning needs.</p></div>
+<div class="feature"><div class="num">04</div><h3>Music Beyond Exams</h3><p>Examinations can be an important milestone, but musical development goes beyond grades.</p></div>
+<div class="feature"><div class="num">05</div><h3>Self-Motivated Learning</h3><p>Students are encouraged to understand music and gradually develop confidence as independent learners.</p></div>
+<div class="feature"><div class="num">06</div><h3>Flexible Learning Path</h3><p>Lessons are not locked to one fixed textbook or learning path.</p></div>
+</div></div></section>
+
+<section id="approach" class="approach"><div class="container approachgrid reveal">
+<div><div class="kicker">A Different Approach</div><h2>Perhaps you're looking for something different?</h2></div>
+<div class="cards">
+<div class="card"><h3>Previous teacher wasn't the right fit?</h3><p>Sometimes the right teacher-student relationship makes all the difference.</p></div>
+<div class="card"><h3>Your previous teacher stopped teaching?</h3><p>Continue your musical journey with a teacher who can work from your existing level.</p></div>
+<div class="card"><h3>Prefer genuine one-to-one learning?</h3><p>Lessons are conducted directly between student and instructor.</p></div>
+<div class="card"><h3>Lost your passion for piano?</h3><p>It may be possible to rediscover what made music meaningful to you.</p></div>
+<div class="card"><h3>Your child needs an adaptable teacher?</h3><p>Different learners may need different explanations, pacing and encouragement.</p></div>
+<div class="card"><h3>Your child is reluctant to learn?</h3><p>Sometimes the answer is not more pressure, but a different approach.</p></div>
+</div></div></section>
+
+<section id="courses" class="white"><div class="container">
+<div class="heading reveal"><div class="kicker">Piano Programmes</div><h2>Lessons shaped around the learner.</h2></div>
+<div class="courses reveal">
+<article class="course"><div class="tag">01 · All Ages</div><h3>Basic One-to-One Piano Lessons</h3><p>A strong foundation for students who are new to the piano.</p><p>Lessons cover piano technique, music reading, theory, repertoire and musical understanding.</p><p>Examination preparation for ABRSM or Trinity can be included according to the student's goals and readiness.</p><div class="for">Children · Beginners · Returning Students</div></article>
+<article class="course"><div class="tag">02 · Teenagers</div><h3>Teen Piano — Focused & Accelerated</h3><p>Designed for teenagers who have limited time or are starting later.</p><p>Having personally started piano at 14, J.E. understands the challenges faced by students who begin during their teenage years.</p><p>The programme focuses on meaningful progress without unnecessarily compromising the fundamentals.</p><div class="for">Teenagers · Late Starters · Limited Time</div></article>
+<article class="course"><div class="tag">03 · Adults</div><h3>Adult Piano Lessons</h3><p>Learning piano as an adult can be very different from learning as a child.</p><p>Whether you want to learn for leisure, pick up a new skill, return to music or pursue piano seriously, lessons can be personalised around you.</p><div class="for">Beginners · Returning Players · Hobbyists · Serious Learners</div></article>
+</div></div></section>
+
+<section id="journey" class="dark"><div class="container">
+<div class="heading reveal"><div class="kicker">Student Journey</div><h2>Every achievement matters.</h2><p>From the first lesson to the concert stage, every student has a different journey.</p></div>
+<div class="journey reveal">
+<div class="journeyitem"><div class="journeyicon">★</div><h3>Personal Milestones</h3><p>Confidence, progress and musical growth</p></div>
+<div class="journeyitem"><div class="journeyicon">♫</div><h3>Performances</h3><p>Recitals · Festivals · Public Performances</p></div>
+<div class="journeyitem"><div class="journeyicon">♪</div><h3>Examinations</h3><p>ABRSM · Trinity</p></div>
+<div class="journeyitem"><div class="journeyicon">♛</div><h3>Competitions</h3><p>Local & International Competitions</p></div>
+
+
+</div></div></section>
+
+<!-- ====== Gallery overview (paste as a single block into index.html) ====== -->
+<style>
+/* Scoped gallery styles - applies to #home-gallery OR #gallery so nav anchors work */
+#home-gallery, #gallery { padding: 40px 0; }
+#home-gallery .container, #gallery .container { width: min(var(--max,1180px), calc(100% - 48px)); margin: 0 auto; }
+
+#home-gallery .section-heading .kicker, #gallery .section-heading .kicker { font-weight:700; text-transform:uppercase; color:var(--gold); font-size:.75rem; margin-bottom:6px; }
+#home-gallery .section-heading h2, #gallery .section-heading h2 { font-family:"Playfair Display",serif; margin:6px 0 18px; }
+
+/* Grid and cards */
+#gallery-grid { display:flex; gap:20px; flex-wrap:wrap; justify-content:flex-start; margin-top:18px; align-items:flex-start; }
+.category-card {
+  width:220px;
+  background:#fff;
+  padding:12px;
+  border-radius:10px;
+  box-shadow:0 8px 20px rgba(0,0,0,.06);
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.category-thumb {
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  border-radius:8px;
+  display:block;
+  margin-bottom:12px;
+  flex-shrink:0;
+}
+
+/* Title link below image */
+.category-title {
+  font-family:"Playfair Display",serif;
+  font-size:0.95rem;
+  color:var(--black);
+  text-decoration:none;
+  margin-bottom:10px;
+}
+
+/* "No thumbnail" text */
+.no-image { color:var(--grey); font-size:0.9rem; padding:14px 6px; }
+
+/* single centered button below the grid */
+.gallery-cta-wrap { text-align:center; margin-top:26px; }
+.view-more-all {
+  display:inline-block;
+  padding:12px 30px;
+  border:2px solid rgba(0,0,0,0.12);
+  background:transparent;
+  border-radius:8px;
+  font-weight:700;
+  letter-spacing:0.08em;
+  color:var(--black);
+  text-decoration:none;
+}
+.view-more-all:hover { transform:translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,.06); cursor:pointer; }
+
+/* Responsive */
+@media (max-width:820px) {
+  #gallery-grid { justify-content:center; gap:14px; }
+  .category-card { width:46%; max-width:260px; }
+}
+@media (max-width:520px) {
+  .category-card { width:100%; }
+  .category-thumb { height:180px; }
+}
+</style>
+
+<section id="gallery" aria-labelledby="home-gallery-title">
+  <div class="container">
+    <div class="section-heading">
+      <div class="kicker">Gallery</div>
+      <h2 id="home-gallery-title">Moments from our students' musical journey.</h2>
+    </div>
+
+    <div id="gallery-grid" aria-live="polite"></div>
+
+    <div class="gallery-cta-wrap">
+      <!-- Change the href to whichever category or page you prefer -->
+      <a id="allGalleryBtn" class="view-more-all" href="category.html?cat=recital">VIEW MORE PHOTOS</a>
     </div>
   </div>
 </section>
-
-<footer>
-  <div class="container foot">
-    <div>
-      <a class="brand" href="#"><span class="brandmark"><img src="images/logo.png" alt="JE Piano Studio logo" class="brand-logo"></span><span class="brandtext">J.E. Piano Studio<small>Piano Lessons · Klang</small></span></a>
-    </div>
-    <div>
-      <p>Taman Andalas Jaya · 41200 Klang, Selangor</p>
-      <p>016-345 3132 · © 2026 J.E. Piano Studio</p>
-    </div>
-  </div>
-</footer>
-
-<!-- Site scripts: navigation + reveal animations -->
+    
 <script>
-/* Simple nav scroll behaviour and mobile menu (kept from original) */
-const nav = document.getElementById('nav'), menu = document.getElementById('menu'), mobile = document.getElementById('mobile'), closeBtn = document.getElementById('close');
-window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50));
-if (menu) menu.onclick = () => mobile.classList.add('open');
-if (closeBtn) closeBtn.onclick = () => mobile.classList.remove('open');
-if (mobile) mobile.querySelectorAll && mobile.querySelectorAll('a').forEach(a => a.onclick = () => mobile.classList.remove('open'));
-
-/* Reveal on scroll */
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('show');
-      io.unobserve(e.target);
-    }
-  });
-}, { threshold: .12 });
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-</script>
-
-<!-- 3D rotating carousel script -->
-<script>
+/* Build homepage category cards.
+   Save images as images/recital1.jpg images/competition1.jpg etc.
+   This script expects index.html and category.html to be in same folder as images/ */
 (function () {
-  const ring = document.getElementById('ring');
-  const faces = Array.from(ring.querySelectorAll('.face'));
-  const prevBtn = document.getElementById('prev');
-  const nextBtn = document.getElementById('next');
-  const dotsWrap = document.getElementById('dots');
-  const carouselContainer = document.querySelector('.carousel-3d');
+  const categories = [
+    { key: 'recital', title: 'Student Recitals', count: 5 },
+    { key: 'competition', title: 'Competition', count: 5 },
+    { key: 'exam', title: 'Examinations', count: 5 },
+    { key: 'performance', title: 'Piano & Music', count: 5 },
+    { key: 'students', title: 'Students', count: 5 }
+  ];
 
-  if (!ring || faces.length === 0) return;
+  const base = 'images/';
+  const ext = '.jpg';
+  const grid = document.getElementById('gallery-grid');
 
-  // Settings (tweak these)
-  const STEP_MS = 2000; // user requested 2000ms per step
-  const INTERACTION_PAUSE_MS = 4000; // resume autoplay after this many ms since last user interaction
-  const TRANSITION_MS = 600; // smooth duration when snapping to a slide
+  if (!grid) return;
 
-  let count = faces.length;
-  let theta = 360 / count; // degrees between faces
-  let currentIndex = 0; // logical index of front face
-  let radius = Math.min( (carouselContainer.clientWidth / 2) / Math.tan(Math.PI / count), 320 ); // reasonable default
-  // If computed radius is silly (very small), set fallback
-  radius = Math.max(140, Math.min(radius, 420));
-  // we expose radius as CSS var for any style needs
-  document.documentElement.style.setProperty('--carousel-radius', radius + 'px');
+  categories.forEach(cat => {
+    const card = document.createElement('div');
+    card.className = 'category-card';
 
-  // Place faces around the ring
-  function placeFaces() {
-    // set face width in px for good centering and consistent height
-    const pxWidth = Math.round(carouselContainer.clientWidth * 0.68);
-    faces.forEach((face, i) => {
-      const angle = theta * i;
-      // CSS transform for placement: rotateY(angle) translateZ(radius)
-      face.style.transform = `translate(-50%,-50%) rotateY(${angle}deg) translateZ(${radius}px)`;
-      // set width explicitly so height & shadows are consistent
-      face.style.width = pxWidth + 'px';
-      // ensure ARIA initially set; front one later updated
-      face.setAttribute('aria-hidden', 'true');
-    });
-    // set ring's transform based on current index
-    rotateToIndex(currentIndex, false);
-  }
+    const href = `category.html?cat=${encodeURIComponent(cat.key)}`;
 
-  // rotate ring so that face at index becomes front
-  let isAnimating = false;
-  function rotateToIndex(index, animate = true) {
-    if (animate) {
-      ring.style.transition = `transform ${TRANSITION_MS}ms cubic-bezier(.22,.9,.36,1)`;
-    } else {
-      ring.style.transition = 'none';
-    }
-    const angle = -theta * index;
-    ring.style.transform = `translateZ(0px) rotateY(${angle}deg)`;
-    // Update faces `aria-hidden` and highlight front face
-    faces.forEach((f, i) => {
-      const diff = (i - index + count) % count;
-      // front face is diff === 0
-      if (diff === 0) {
-        f.classList.add('face-front');
-        f.setAttribute('aria-hidden', 'false');
-        // for keyboard users, put focusable attribute
-        f.setAttribute('tabindex', '0');
-      } else {
-        f.classList.remove('face-front');
-        f.setAttribute('aria-hidden', 'true');
-        f.setAttribute('tabindex', '-1');
-      }
-    });
-    updateDotsForIndex(index);
-  }
+    // image (clickable)
+    const aImg = document.createElement('a');
+    aImg.href = href;
+    aImg.setAttribute('aria-label', cat.title);
 
-  // Next / Prev helpers
-  function nextIndex() { return (currentIndex + 1) % count; }
-  function prevIndex() { return (currentIndex - 1 + count) % count; }
+    const img = document.createElement('img');
+    img.className = 'category-thumb';
+    img.src = `${base}${cat.key}1${ext}`;
+    img.alt = cat.title + ' thumbnail';
+    img.loading = 'lazy';
 
-  function goTo(index, animate = true) {
-    if (isAnimating) return;
-    isAnimating = true;
-    currentIndex = ((index % count) + count) % count;
-    rotateToIndex(currentIndex, animate);
-    setTimeout(() => { isAnimating = false; }, TRANSITION_MS + 30);
-  }
+    // if thumbnail missing, remove and put placeholder text
+    img.onerror = () => {
+      if (img.parentNode) img.remove();
+      const placeholder = document.createElement('div');
+      placeholder.className = 'no-image';
+      placeholder.textContent = `No thumbnail — upload ${cat.key}1${ext}`;
+      aImg.appendChild(placeholder);
+    };
 
-  // Dots
-  function buildDots() {
-    dotsWrap.innerHTML = '';
-    for (let i = 0; i < count; i++) {
-      const b = document.createElement('button');
-      b.className = 'dot';
-      b.setAttribute('aria-label', 'Show review ' + (i + 1));
-      b.setAttribute('role', 'tab');
-      b.addEventListener('click', () => {
-        goTo(i);
-        pauseAutoplayAfterInteraction();
-      });
-      dotsWrap.appendChild(b);
-    }
-    updateDotsForIndex(currentIndex);
-  }
+    aImg.appendChild(img);
+    card.appendChild(aImg);
 
-  function updateDotsForIndex(index) {
-    const dots = Array.from(dotsWrap.children);
-    dots.forEach((d, i) => d.classList.toggle('active', i === index));
-  }
+    // title (clickable)
+    const titleLink = document.createElement('a');
+    titleLink.href = href;
+    titleLink.className = 'category-title';
+    titleLink.textContent = cat.title;
+    card.appendChild(titleLink);
 
-  // Autoplay: continuous stepping so each card becomes front every STEP_MS
-  let autoplayTimer = null;
-  let lastInteraction = 0;
-
-  function startAutoplay() {
-    stopAutoplay();
-    autoplayTimer = setInterval(() => {
-      const now = Date.now();
-      // if user recently interacted, skip
-      if (now - lastInteraction < INTERACTION_PAUSE_MS) return;
-      goTo(nextIndex(), true);
-    }, STEP_MS);
-  }
-  function stopAutoplay() {
-    if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
-  }
-  function pauseAutoplayAfterInteraction() {
-    lastInteraction = Date.now();
-    stopAutoplay();
-    if (autoplayResumeTimer) clearTimeout(autoplayResumeTimer);
-    autoplayResumeTimer = setTimeout(() => {
-      lastInteraction = 0;
-      startAutoplay();
-    }, INTERACTION_PAUSE_MS);
-  }
-  let autoplayResumeTimer = null;
-
-  // Buttons
-  prevBtn.addEventListener('click', () => {
-    goTo(prevIndex());
-    pauseAutoplayAfterInteraction();
+    grid.appendChild(card);
   });
-  nextBtn.addEventListener('click', () => {
-    goTo(nextIndex());
-    pauseAutoplayAfterInteraction();
-  });
-
-  // Keyboard support
-  const carouselRegion = carouselContainer;
-  carouselRegion.setAttribute('tabindex', '0');
-  carouselRegion.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') { goTo(prevIndex()); pauseAutoplayAfterInteraction(); }
-    if (e.key === 'ArrowRight') { goTo(nextIndex()); pauseAutoplayAfterInteraction(); }
-  });
-
-  // Click a face to navigate to it (useful for peek visible on some layouts)
-  faces.forEach((f, i) => {
-    f.addEventListener('click', (e) => {
-      // ignore clicks on interactive elements inside the face
-      if (e.target.closest('button, a, input, textarea')) return;
-      if (i !== currentIndex) {
-        goTo(i);
-        pauseAutoplayAfterInteraction();
-      }
-    });
-  });
-
-  // Pause autoplay on hover/focus and resume after leave
-  carouselContainer.addEventListener('mouseenter', () => { stopAutoplay(); });
-  carouselContainer.addEventListener('mouseleave', () => { startAutoplay(); });
-  carouselContainer.addEventListener('focusin', () => { stopAutoplay(); });
-  carouselContainer.addEventListener('focusout', () => { startAutoplay(); });
-
-  // Visibility change pause
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) stopAutoplay();
-    else startAutoplay();
-  });
-
-  // Resize handling: reposition faces and recompute radius
-  let resizeTimer = null;
-  window.addEventListener('resize', () => {
-    if (resizeTimer) clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      // recompute radius with new container width
-      radius = Math.min( (carouselContainer.clientWidth / 2) / Math.tan(Math.PI / count), 420 );
-      radius = Math.max(120, Math.min(radius, 420));
-      document.documentElement.style.setProperty('--carousel-radius', radius + 'px');
-      placeFaces();
-    }, 120);
-  });
-
-  // initial layout
-  placeFaces();
-  buildDots();
-  goTo(0, false);
-  startAutoplay();
-
-  // make sure transition style is cleared after initial no-animation goTo
-  setTimeout(() => { ring.style.transition = `transform ${TRANSITION_MS}ms cubic-bezier(.22,.9,.36,1)`; }, 50);
-
 })();
 </script>
+<!-- ====== End gallery block ====== -->
 
+<section id="reviews" class="reviews"><div class="container">
+<div class="heading reveal"><div class="kicker">Reviews</div><h2>What students & parents say.</h2></div>
+<div class="reviewgrid reveal">
+<div class="review"><div class="stars">★★★★★</div><p>“As an adult student, it is quite easy to keep putting piano aside because of work and other things. J.E. really understands this and always finds ways to make the playing easier and less frustrating. It keeps me going.”</p><strong>— Michelle</strong></div>
+<div class="review"><div class="stars">★★★★★</div><p>“What I appreciate most is the patience and encouragement. If I struggle with a piece, J.E. finds another way to explain it instead of simply telling me to practise more.”</p><strong>— Elaine</strong></div>
+<div class="review"><div class="stars">★★★★★</div><p>“Our child has improved so much and, more importantly, has become more confident and enjoys playing piano. We are very happy with the learning experience.”</p><strong>— Parent</strong></div>
+</div></div></section>
+
+<section id="contact" class="contact"><div class="container contactgrid reveal">
+<div class="contactbox">
+<div class="kicker">Visit / Enquire</div>
+<h2>Let's talk about your piano journey.</h2>
+<div class="details">
+<div class="detail"><div class="icon">⌖</div><div><strong>Location</strong><span>Taman Andalas Jaya, 41200 Klang, Selangor</span></div></div>
+<div class="detail"><div class="icon">☎</div><div><strong>Phone</strong><span>016-345 3132</span></div></div>
+</div>
+<a class="btn gold" href="https://wa.me/60163453132" target="_blank" rel="noopener">WhatsApp J.E. Piano Studio</a>
+</div>
+
+<div class="mapbox">
+<div class="maparea">
+<div>
+<div class="pin"><span>♪</span></div>
+<div class="maptitle">J.E. Piano Studio</div>
+<div class="mapsmall">Taman Andalas Jaya · 41200 Klang</div>
+<a class="mapbtn" href="https://www.google.com/maps/search/?api=1&query=J.E.%20Piano%20Studio%20Taman%20Andalas%20Jaya%20Klang" target="_blank" rel="noopener">OPEN IN GOOGLE MAPS</a>
+</div>
+</div>
+<div class="mapfoot">Taman Andalas Jaya · 41200 Klang, Selangor</div>
+</div>
+</div></section>
+
+<footer><div class="container foot">
+<div><a class="brand" href="#"><span class="brandmark"><img src="images/logo.png" alt="JE Piano Studio logo" class="brand-logo"></span><span class="brandtext">J.E. Piano Studio<small>Piano Lessons · Klang</small></span></a><br><p>Personalised one-to-one piano lessons for children, teenagers and adults.</p></div>
+<div><p>Taman Andalas Jaya · 41200 Klang, Selangor</p><p>016-345 3132 · © 2026 J.E. Piano Studio</p></div>
+</div></footer>
+
+<script>
+const nav=document.getElementById("nav"),menu=document.getElementById("menu"),mobile=document.getElementById("mobile"),close=document.getElementById("close");
+window.addEventListener("scroll",()=>nav.classList.toggle("scrolled",window.scrollY>50));
+menu.onclick=()=>mobile.classList.add("open");close.onclick=()=>mobile.classList.remove("open");
+mobile.querySelectorAll("a").forEach(a=>a.onclick=()=>mobile.classList.remove("open"));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("show");io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll(".reveal").forEach(e=>io.observe(e));
+</script>
 </body>
 </html>
