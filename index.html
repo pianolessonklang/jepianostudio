@@ -364,11 +364,8 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
         if (w >= 1200) pct = 0.56;
         else if (w >= 900) pct = 0.62;
         else if (w >= 520) pct = 0.78;
-        else pct = 0.92;
-    if (w >= 768) pct = 0.75;      // Tablets in portrait
-    else if (w >= 480) pct = 0.85; // Large phones in portrait
-    else pct = 0.95;               // Small phones in portrait
-          const px = Math.round(viewport.clientWidth * pct);
+        else pct = 0.92;    
+        const px = Math.round(viewport.clientWidth * pct);
         slides().forEach(s => {
           s.style.width = px + 'px';
         });
