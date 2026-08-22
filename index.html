@@ -183,6 +183,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 
 <!-- ====== Gallery overview (paste as a single block into index.html) ====== -->
 <!-- ====== Gallery carousel section ====== -->
+
 <section id="gallery" class="white">
   <div class="container">
     <div class="heading reveal">
@@ -359,28 +360,19 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       // Set slide widths in px
       function computeSlideWidth() {
         const w = window.innerWidth;
-    let pct = 0.56;
-    if (w >= 1200) pct = 0.56;
-    else if (w >= 900) pct = 0.62;
-    else if (w >= 520) pct = 0.78;
-    else pct = 0.92;
- 
-  const px = Math.round(viewport.clientWidth * pct);
-  
-  slides().forEach(s => {
-    s.style.width = px + 'px';
-  });
-  
-  setTimeout(() => {
-    // Check if slide exists to prevent errors
-    const h = slides()[0].offsetHeight;
+        let pct = 0.56;
+        if (w >= 1200) pct = 0.56;
+        else if (w >= 900) pct = 0.62;
+        else if (w >= 520) pct = 0.78;
+        else pct = 0.92;
+        const px = Math.round(viewport.clientWidth * pct);
+        slides().forEach(s => {
+          s.style.width = px + 'px';
+        });
+        setTimeout(() => {
+          const h = slides()[0].offsetHeight;
           track.style.minHeight = h + 'px';
         }, 30);
-}
-
-// Event listener to trigger recalculation on rotate or resize
-window.addEventListener('resize', computeSlideWidth);
-
       }
 
       // Build dots
@@ -509,7 +501,6 @@ window.addEventListener('resize', computeSlideWidth);
 
     })();
   </script>
-
 </section>
 <!-- ====== End gallery carousel ====== -->
     
