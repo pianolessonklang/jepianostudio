@@ -357,21 +357,19 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       const slides = () => Array.from(track.children);
 
       // Set slide widths in px
-      function computeSlideWidth() {
-        const w = window.innerWidth;
-        let pct = 0.56;
-        if (w >= 1200) pct = 0.56;
-        else if (w >= 900) pct = 0.62;
-        else if (w >= 520) pct = 0.78;
-        else pct = 0.92;
-        const px = Math.round(viewport.clientWidth * pct);
-        slides().forEach(s => {
-          s.style.width = px + 'px';
-        });
+      function computeSlideTrackHeight() {
+        const sliders = slides();
+        if (sliders.length === 0) return;
+
         setTimeout(() => {
-          const h = slides()[0].offsetHeight;
-          track.style.minHeight = h + 'px';
-        }, 30);
+          const activeSlide = track.querySelector('.gallery-slide.active') || sliders[0];
+          if (activeSlide) {
+            const h = activeSlide.offsetHeight;
+            if (h > 0) {
+              track.style.minHeight = h + 'px';
+            }
+          }
+        }, 50);
       }
 
       // Build dots
