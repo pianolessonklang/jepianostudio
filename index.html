@@ -345,6 +345,7 @@ function buildSlides() {
     
     // Create a temporary image element to check if file exists
     const tempImg = new Image();
+      tempImg.src = imgPath;
     
     tempImg.addEventListener('load', () => {
       createSlide(i, imgPath);
@@ -355,7 +356,7 @@ function buildSlides() {
     }, { once: true });
 
     // Trigger load
-    tempImg.src = imgPath;
+    tempImg.load();
   }
 
   // If no images found after timeout, show message
