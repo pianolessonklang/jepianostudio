@@ -340,26 +340,30 @@ function buildSlides() {
   track.innerHTML = '';
   validIndices = [];
   
-  // FIXED: Changed MAX_IMAGES to TOTAL_IMAGES to match your variable definition
+  // Check if image exists and build slides
+function buildSlides() {
+  track.innerHTML = '';
+  validIndices = [];
+
   for (let i = 1; i <= TOTAL_IMAGES; i++) {
     const imgPath = `images/gallery${i}.jpg`;
     
-    // Create an image object to test loading
+    // Create a temporary image element to check if file exists
     const tempImg = new Image();
     
-    // FIXED: Moved src below listeners to keep it stable
-    tempImg.onload = () => {
+    tempImg.addEventListener('load', () => {
       createSlide(i, imgPath);
-    };
+    }, { once: true });
 
-    tempImg.onerror = () => {
-      // Image does not exist or failed to load - skip it silently
-    };
+    tempImg.addEventListener('error', () => {
+      // Image not found - skip it
+    }, { once: true });
 
+    // Trigger load
     tempImg.src = imgPath;
-  } // FIXED: Added this closing bracket to properly close the for loop!
+  }
 
-  // Hide carousel container if zero images load within 2 seconds
+  // If no images found after timeout, show message
   setTimeout(() => {
     if (validIndices.length === 0) {
       track.innerHTML = '<div style="padding:40px;text-align:center;color:#999;">No images uploaded yet.</div>';
@@ -368,11 +372,11 @@ function buildSlides() {
   }, 2000);
 }
 
-// Safely insert elements only for valid image loads
 function createSlide(index, imgPath) {
-  if (validIndices.includes(index)) return; 
+  if (validIndices.includes(index)) return; // Already added
   
   validIndices.push(index);
+
 
 
         
