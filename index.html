@@ -208,7 +208,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 
   <style>
     /* Gallery carousel with overlapping peek effect */
-   #gallery { background:#fff; padding:40px 0; }
+    #gallery { background:#fff; padding:40px 0; }
     #gallery .heading { margin-bottom:18px; }
 
     .gallery-carousel { position:relative; display:block; user-select:none; }
@@ -227,7 +227,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       width:56%;
       box-sizing:border-box;
       cursor:pointer;
-    overflow:hidden;
+      overflow:hidden;
     }
     .gallery-slide.active {
       opacity:1;
@@ -252,12 +252,13 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 
     .gallery-image {
       width:100%;
-      height:320px;
+      height:auto;
+      max-height:320px;
+      object-fit:cover;
+      object-position:center;
       border-radius:12px;
       display:block;
       box-shadow:0 12px 28px rgba(0,0,0,.12);
-      object-fit:cover;
-      object-position:center;
     }
 
     /* buttons */
@@ -295,19 +296,19 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       .gallery-slide { width:92%; }
       .gallery-slide.peek-left { transform:translateX(calc(-50% - 60px)); }
       .gallery-slide.peek-right { transform:translateX(calc(-50% + 60px)); }
-      .gallery-image { height:240px; }
+      .gallery-image { max-height:240px; }
     }
     @media (min-width:521px) and (max-width:899px) { 
       .gallery-slide { width:78%; }
       .gallery-slide.peek-left { transform:translateX(calc(-50% - 140px)); }
       .gallery-slide.peek-right { transform:translateX(calc(-50% + 140px)); }
-      .gallery-image { height:280px; }
+      .gallery-image { max-height:280px; }
     }
     @media (min-width:900px) { 
       .gallery-slide { width:56%; }
       .gallery-slide.peek-left { transform:translateX(calc(-50% - 180px)); }
       .gallery-slide.peek-right { transform:translateX(calc(-50% + 180px)); }
-      .gallery-image { height:320px; }
+      .gallery-image { max-height:320px; }
     }
   </style>
 
