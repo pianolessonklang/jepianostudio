@@ -328,13 +328,211 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 </script>
 <!-- ====== End gallery block ====== -->
 
-<section id="reviews" class="reviews"><div class="container">
-<div class="heading reveal"><div class="kicker">Reviews</div><h2>What students & parents say.</h2></div>
-<div class="reviewgrid reveal">
-<div class="review"><div class="stars">★★★★★</div><p>“As an adult student, it is quite easy to keep putting piano aside because of work and other things. J.E. really understands this and always finds ways to make the playing easier and less frustrating. It keeps me going.”</p><strong>— Michelle</strong></div>
-<div class="review"><div class="stars">★★★★★</div><p>“What I appreciate most is the patience and encouragement. If I struggle with a piece, J.E. finds another way to explain it instead of simply telling me to practise more.”</p><strong>— Elaine</strong></div>
-<div class="review"><div class="stars">★★★★★</div><p>“Our child has improved so much and, more importantly, has become more confident and enjoys playing piano. We are very happy with the learning experience.”</p><strong>— Parent</strong></div>
-</div></div></section>
+<section id="reviews" class="reviews">
+  <div class="container">
+    <div class="heading reveal">
+      <div class="kicker">Reviews</div>
+      <h2>What students &amp; parents say.</h2>
+    </div>
+
+    <!-- Carousel -->
+    <div class="reviews-carousel reveal" aria-roledescription="carousel">
+      <button class="carousel-btn prev" aria-label="Previous review">‹</button>
+
+      <div class="carousel-viewport">
+        <div class="carousel-track" role="list">
+          <div class="slide" role="listitem">
+            <div class="review">
+              <div class="stars">★★★★★</div>
+              <p>“As an adult student, it is quite easy to keep putting piano aside because of work and other things. J.E. really understands this and always finds ways to make the playing easier and less frustrating. It keeps me going.”</p>
+              <strong>— Michelle</strong>
+            </div>
+          </div>
+
+          <div class="slide" role="listitem">
+            <div class="review">
+              <div class="stars">★★★★★</div>
+              <p>“What I appreciate most is the patience and encouragement. If I struggle with a piece, J.E. finds another way to explain it instead of simply telling me to practise more.”</p>
+              <strong>— Elaine</strong>
+            </div>
+          </div>
+
+          <div class="slide" role="listitem">
+            <div class="review">
+              <div class="stars">★★★★★</div>
+              <p>“Our child has improved so much and, more importantly, has become more confident and enjoys playing piano. We are very happy with the learning experience.”</p>
+              <strong>— Parent</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="carousel-btn next" aria-label="Next review">›</button>
+
+      <div class="carousel-dots" aria-hidden="false"></div>
+    </div>
+  </div>
+
+  <style>
+    /* Scoped carousel styles */
+    .reviews { background:#fff; padding:40px 0; }
+    .reviews .heading { margin-bottom:18px; }
+
+    .reviews-carousel { position:relative; display:flex; align-items:center; gap:12px; }
+    .carousel-viewport { overflow:hidden; width:100%; }
+    .carousel-track { display:flex; gap:18px; transition:transform .45s cubic-bezier(.22,.9,.36,1); will-change:transform; }
+    .slide { min-width:100%; box-sizing:border-box; display:flex; }
+    .review { padding:28px; min-height:180px; background:var(--cream); border:1px solid var(--line); border-radius:8px; width:100%; }
+    .review .stars { color:#d4a017; font-size:1.05rem; margin-bottom:10px; }
+    .carousel-btn { position:relative; z-index:5; background:rgba(0,0,0,0.06); border:0; width:44px; height:44px; border-radius:8px; font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .15s; }
+    .carousel-btn:hover { transform:translateY(-3px); }
+    .carousel-btn:disabled { opacity:.35; cursor:not-allowed; transform:none; }
+
+    .carousel-dots { position:relative; margin-top:18px; text-align:center; width:100%; display:flex; justify-content:center; gap:8px; }
+    .carousel-dot { width:10px; height:10px; border-radius:50%; background:rgba(0,0,0,0.12); border:2px solid transparent; cursor:pointer; }
+    .carousel-dot.active { background:var(--gold); }
+
+    /* Responsive: show more slides per view */
+    @media (min-width:520px) {
+      .slide { min-width:50%; }
+    }
+    @media (min-width:900px) {
+      .slide { min-width:33.3333%; }
+    }
+  </style>
+
+  <script>
+    (function () {
+      const carousel = document.querySelector('.reviews-carousel');
+      if (!carousel) return;
+
+      const track = carousel.querySelector('.carousel-track');
+      const slides = Array.from(track.children);
+      const prevBtn = carousel.querySelector('.carousel-btn.prev');
+      const nextBtn = carousel.querySelector('.carousel-btn.next');
+      const dotsWrap = carousel.querySelector('.carousel-dots');
+
+      let slidesToShow = calcSlidesToShow();
+      let currentIndex = 0;
+      let slideWidth = 0;
+      let autoplayTimer = null;
+      const AUTOPLAY_MS = 4500;
+
+      // build dots
+      function buildDots() {
+        dotsWrap.innerHTML = '';
+        const pages = Math.max(1, slides.length - slidesToShow + 1);
+        for (let i = 0; i < pages; i++) {
+          const dot = document.createElement('button');
+          dot.className = 'carousel-dot';
+          dot.setAttribute('aria-label', 'Show reviews ' + (i + 1));
+          dot.addEventListener('click', () => {
+            goTo(i);
+            resetAutoplay();
+          });
+          dotsWrap.appendChild(dot);
+        }
+      }
+
+      function calcSlidesToShow() {
+        const w = window.innerWidth;
+        if (w >= 900) return 3;
+        if (w >= 520) return 2;
+        return 1;
+      }
+
+      function resize() {
+        slidesToShow = calcSlidesToShow();
+        // ensure pages count >=1
+        const pages = Math.max(1, slides.length - slidesToShow + 1);
+
+        // compute slide width based on viewport
+        const viewport = carousel.querySelector('.carousel-viewport');
+        slideWidth = viewport.clientWidth / slidesToShow;
+        slides.forEach(slide => slide.style.minWidth = slideWidth + 'px');
+
+        // clamp currentIndex
+        if (currentIndex > slides.length - slidesToShow) {
+          currentIndex = Math.max(0, slides.length - slidesToShow);
+        }
+        update();
+        buildDots();
+        updateButtons();
+      }
+
+      function update() {
+        const x = -currentIndex * slideWidth;
+        track.style.transform = 'translateX(' + x + 'px)';
+        // update dots
+        const dots = Array.from(dotsWrap.children);
+        dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+      }
+
+      function updateButtons() {
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex >= slides.length - slidesToShow;
+      }
+
+      function goTo(index) {
+        currentIndex = Math.max(0, Math.min(index, slides.length - slidesToShow));
+        update();
+        updateButtons();
+      }
+
+      prevBtn.addEventListener('click', () => {
+        goTo(currentIndex - 1);
+        resetAutoplay();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        goTo(currentIndex + 1);
+        resetAutoplay();
+      });
+
+      // autoplay
+      function startAutoplay() {
+        stopAutoplay();
+        autoplayTimer = setInterval(() => {
+          if (currentIndex < slides.length - slidesToShow) {
+            goTo(currentIndex + 1);
+          } else {
+            goTo(0);
+          }
+        }, AUTOPLAY_MS);
+      }
+
+      function stopAutoplay() {
+        if (autoplayTimer) {
+          clearInterval(autoplayTimer);
+          autoplayTimer = null;
+        }
+      }
+
+      function resetAutoplay() {
+        stopAutoplay();
+        startAutoplay();
+      }
+
+      // pause on hover/focus
+      carousel.addEventListener('mouseenter', stopAutoplay);
+      carousel.addEventListener('mouseleave', startAutoplay);
+      carousel.addEventListener('focusin', stopAutoplay);
+      carousel.addEventListener('focusout', startAutoplay);
+
+      // accessibility: keyboard navigation
+      carousel.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { prevBtn.click(); }
+        if (e.key === 'ArrowRight') { nextBtn.click(); }
+      });
+
+      window.addEventListener('resize', resize);
+
+      // initialize
+      resize();
+      startAutoplay();
+    })();
+  </script>
+</section>
 
 <section id="contact" class="contact"><div class="container contactgrid reveal">
 <div class="contactbox">
