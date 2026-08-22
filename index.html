@@ -333,11 +333,44 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       let autoplayTimer = null;
       let interactionTimer = null;
       let isTransitioning = false;
+      let validIndices = [];
 
       // Build slides with image elements
       function buildSlides() {
         track.innerHTML = '';
+          validIndices = [];
         for (let i = 1; i <= TOTAL_IMAGES; i++) {
+        const imgPath = `images/gallery${i}.jpg`;
+        
+        // Create an image object to test loading
+        const tempImg = new Image();
+        tempImg.src = imgPath;
+        
+        tempImg.onload = () => {
+          createSlide(i, imgPath);
+        };
+
+        tempImg.onerror = () => {
+          // Image does not exist or failed to load - skip it silently
+        };
+      }
+
+      // Hide carousel container if zero images load within 2 seconds
+      setTimeout(() => {
+        if (validIndices.length === 0) {
+          track.innerHTML = '<div style="padding:40px;text-align:center;color:#999;">No images uploaded yet.</div>';
+          carousel.style.display = 'none';
+        }
+      }, 2000);
+    }
+
+    // Safely insert elements only for valid image loads
+    function createSlide(index, imgPath) {
+      if (validIndices.includes(index)) return; 
+      
+      validIndices.push(index);
+
+        
           const slide = document.createElement('div');
           slide.className = 'gallery-slide';
           slide.setAttribute('role', 'group');
