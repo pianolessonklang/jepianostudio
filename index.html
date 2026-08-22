@@ -313,7 +313,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     }
   </style>
 
- <script>
+<script>
   (function () {
     const carousel = document.querySelector('.gallery-carousel');
     if (!carousel) return;
@@ -333,7 +333,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     let autoplayTimer = null;
     let interactionTimer = null;
     let isTransitioning = false;
-    let validIndices = []; // Tracks loaded images
+    let validIndices = []; // Tracks successfully loaded images
 
     // Check if images exist and build slides asynchronously
     function buildSlides() {
@@ -352,7 +352,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
         };
 
         tempImg.onerror = () => {
-          // Image does not exist or failed to load - skip it
+          // Image does not exist or failed to load - skip it silently
         };
       }
 
@@ -382,38 +382,28 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       img.src = imgPath;
       img.alt = `Gallery photo ${index}`;
       img.loading = 'lazy';
-      
-      // Forces image element to fill slide containers cleanly
-      img.style.width = '100%';
-      img.style.height = 'auto';
-      img.style.display = 'block';
 
       slide.appendChild(img);
       track.appendChild(slide);
 
-      // Initialize or refresh carousel components as images trickle in
+      // Re-initialize or refresh carousel positions as valid images land
       initCarousel();
     }
 
     const slides = () => Array.from(track.querySelectorAll('.gallery-slide'));
 
-    // Matches the slide size directly to the available column/viewport width
-    function computeSlideWidth() {
+    // Fixed: Keeps your beautiful CSS media widths intact, only updates track height
+    function computeSlideTrackHeight() {
       const sliders = slides();
       if (sliders.length === 0) return;
 
-      // Snaps slide sizing perfectly to your layout structure width
-      const targetWidth = viewport.clientWidth;
-      
-      sliders.forEach(s => {
-        s.style.width = targetWidth + 'px';
-      });
-
       setTimeout(() => {
-        const firstSlide = sliders[0];
-        if (firstSlide) {
-          const h = firstSlide.offsetHeight;
-          track.style.minHeight = h + 'px';
+        const activeSlide = track.querySelector('.gallery-slide.active') || sliders[0];
+        if (activeSlide) {
+          const h = activeSlide.offsetHeight;
+          if (h > 0) {
+            track.style.minHeight = h + 'px';
+          }
         }
       }, 50);
     }
@@ -434,6 +424,7 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     }
 
     function updateDots() {
+      if (!dotsWrap.children.length) return;
       Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === current));
     }
 
@@ -456,12 +447,14 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
 
     function showSlide(index) {
       const sliders = slides();
-      if (sliders.length === 0 || isTransitioning || index === current) return;
+      const total = sliders.length;
+      if (total === 0 || isTransitioning || index === current) return;
       isTransitioning = true;
 
       current = index;
       updatePeek();
       updateDots();
+      computeSlideTrackHeight(); // Adjust height if images scale differently across breakpoints
 
       sliders.forEach((s, i) => {
         s.setAttribute('aria-hidden', i === index ? 'false' : 'true');
@@ -528,26 +521,29 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
     });
 
     window.addEventListener('resize', () => {
-      computeSlideWidth();
+      computeSlideTrackHeight();
     });
 
     function initCarousel() {
       const sliders = slides();
       if (sliders.length === 0) return;
 
-      computeSlideWidth();
       buildDots();
       updatePeek();
-      sliders[current].setAttribute('aria-hidden', 'false');
+      if (sliders[current]) {
+        sliders[current].setAttribute('aria-hidden', 'false');
+      }
       updateDots();
+      computeSlideTrackHeight();
       startAutoplay();
     }
 
-    // Start scanning for valid images
+    // Run verification scan
     buildSlides();
 
   })();
 </script>
+
 </section>
 <!-- ====== End gallery carousel ====== -->
     
