@@ -337,41 +337,34 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
   
   // Check if image exists and build slides
 function buildSlides() {
-  track.innerHTML = '';
-  validIndices = [];
+    track.innerHTML = '';
+    validIndices = [];
 
-  for (let i = 1; i <= TOTAL_IMAGES; i++) {
-    const imgPath = `images/gallery${i}.jpg`;
-    
-    // Create a temporary image element to check if file exists
-    const tempImg = document.createElement('img');
+    for (let i = 1; i <= TOTAL_IMAGES; i++) {
+      const imgPath = `images/gallery${i}.jpg`;
+      
+      const tempImg = new Image();
+      
+      tempImg.onload = () => {
+        createSlide(i, imgPath);
+      };
+
+      // Setting src triggers the load check automatically
       tempImg.src = imgPath;
-    
-    tempImg.addEventListener('load', () => {
-      createSlide(i, imgPath);
-    }, { once: true });
+    }
 
-    tempImg.addEventListener('error', () => {
-      // Image not found - skip it
-    }, { once: true });
-
-    // Trigger load
-    tempImg.load();
+    setTimeout(() => {
+      if (validIndices.length === 0) {
+        track.innerHTML = '<div style="padding:40px;text-align:center;color:#999;">No images uploaded yet.</div>';
+        carousel.style.display = 'none';
+      }
+    }, 2000);
   }
 
-  // If no images found after timeout, show message
-  setTimeout(() => {
-    if (validIndices.length === 0) {
-      track.innerHTML = '<div style="padding:40px;text-align:center;color:#999;">No images uploaded yet.</div>';
-      carousel.style.display = 'none';
-    }
-  }, 2000);
-}
-
-function createSlide(index, imgPath) {
-  if (validIndices.includes(index)) return; // Already added
-  
-  validIndices.push(index);
+  function createSlide(index, imgPath) {
+    if (validIndices.includes(index)) return;
+    
+    validIndices.push(index);
 
 
 
