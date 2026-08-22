@@ -366,20 +366,18 @@ function buildSlides() {
     
     validIndices.push(index);
 
+    const slide = document.createElement('div');
+    slide.className = 'gallery-slide';
+    slide.setAttribute('role', 'group');
+    slide.setAttribute('aria-roledescription', 'slide');
+    // FIX: Changed 'i' to 'index' and referenced validIndices.length
+    slide.setAttribute('aria-label', `Photo ${validIndices.length} of ${TOTAL_IMAGES}`);
 
-
-        
-          const slide = document.createElement('div');
-          slide.className = 'gallery-slide';
-          slide.setAttribute('role', 'group');
-          slide.setAttribute('aria-roledescription', 'slide');
-          slide.setAttribute('aria-label', `Photo ${i} of ${TOTAL_IMAGES}`);
-
-          const img = document.createElement('img');
-          img.className = 'gallery-image';
-          img.src = `images/gallery${i}.jpg`;
-          img.alt = `Gallery photo ${i}`;
-          img.loading = 'lazy';
+    const img = document.createElement('img');
+    img.className = 'gallery-image';
+    img.src = imgPath; // FIX: Use parameter imgPath directly
+    img.alt = `Gallery photo ${index}`; // FIX: Changed 'i' to 'index'
+    img.loading = 'lazy';
 
           slide.appendChild(img);
           track.appendChild(slide);
