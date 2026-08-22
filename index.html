@@ -357,19 +357,44 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
       const slides = () => Array.from(track.children);
 
       // Set slide widths in px
-      function computeSlideTrackHeight() {
-        const sliders = slides();
-        if (sliders.length === 0) return;
+      function computeSlideWidth() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const isLandscape = w > h; // Detects orientation based on aspect ratio
+  
+  let pct = 0.56;
+  
+  if (isLandscape) {
+    // Landscape logic (your original desktop/wide viewports)
+    if (w >= 1200) pct = 0.56;
+    else if (w >= 900) pct = 0.62;
+    else if (w >= 520) pct = 0.78;
+    else pct = 0.92;
+  } else {
+    // Portrait logic (optimized for vertical screens)
+    if (w >= 768) pct = 0.75;      // Tablets in portrait
+    else if (w >= 480) pct = 0.85; // Large phones in portrait
+    else pct = 0.95;               // Small phones in portrait
+  }
 
-        setTimeout(() => {
-          const activeSlide = track.querySelector('.gallery-slide.active') || sliders[0];
-          if (activeSlide) {
-            const h = activeSlide.offsetHeight;
-            if (h > 0) {
-              track.style.minHeight = h + 'px';
-            }
-          }
-        }, 50);
+  const px = Math.round(viewport.clientWidth * pct);
+  
+  slides().forEach(s => {
+    s.style.width = px + 'px';
+  });
+  
+  setTimeout(() => {
+    // Check if slide exists to prevent errors
+    if (slides()[0]) {
+      const slideHeight = slides()[0].offsetHeight;
+      track.style.minHeight = slideHeight + 'px';
+    }
+  }, 30);
+}
+
+// Event listener to trigger recalculation on rotate or resize
+window.addEventListener('resize', computeSlideWidth);
+
       }
 
       // Build dots
