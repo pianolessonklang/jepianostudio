@@ -344,7 +344,7 @@ function buildSlides() {
     const imgPath = `images/gallery${i}.jpg`;
     
     // Create a temporary image element to check if file exists
-    const tempImg = new Image();
+    const tempImg = document.createElement('Img');
       tempImg.src = imgPath;
     
     tempImg.addEventListener('load', () => {
