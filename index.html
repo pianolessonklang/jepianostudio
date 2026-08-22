@@ -385,11 +385,9 @@ footer{background:var(--dark);color:#fff;padding:50px 0}.foot{display:flex;align
   
   setTimeout(() => {
     // Check if slide exists to prevent errors
-    if (slides()[0]) {
-      const slideHeight = slides()[0].offsetHeight;
-      track.style.minHeight = slideHeight + 'px';
-    }
-  }, 30);
+    const h = slides()[0].offsetHeight;
+          track.style.minHeight = h + 'px';
+        }, 30);
 }
 
 // Event listener to trigger recalculation on rotate or resize
