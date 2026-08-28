@@ -901,32 +901,12 @@ footer {background:var(--dark);color:#fff;padding:50px 0 70px}.foot{display:flex
 </div></footer>
 
 <script>
-  const menuBtn = document.getElementById('menu');
-  const closeBtn = document.getElementById('close');
-  const mobileNav = document.getElementById('mobile');
-
-  // Open mobile menu
-  if (menuBtn && mobileNav) {
-    menuBtn.addEventListener('click', () => {
-      mobileNav.style.display = 'flex';
-    });
-  }
-
-  // Close mobile menu using (X) button
-  if (closeBtn && mobileNav) {
-    closeBtn.addEventListener('click', () => {
-      mobileNav.style.display = 'none';
-    });
-  }
-
-  // Close mobile menu when clicking any navigation link
-  if (mobileNav) {
-    mobileNav.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileNav.style.display = 'none';
-      });
-    });
-  }
+ const nav=document.getElementById("nav"),menu=document.getElementById("menu"),mobile=document.getElementById("mobile"),close=document.getElementById("close");
+window.addEventListener("scroll",()=>nav.classList.toggle("scrolled",window.scrollY>50));
+menu.onclick=()=>mobile.classList.add("open");close.onclick=()=>mobile.classList.remove("open");
+mobile.querySelectorAll("a").forEach(a=>a.onclick=()=>mobile.classList.remove("open"));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("show");io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll(".reveal").forEach(e=>io.observe(e));
 </script>
 </body>
 </html>
