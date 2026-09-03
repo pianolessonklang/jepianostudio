@@ -126,16 +126,24 @@ footer {background:var(--dark);color:#fff;padding:50px 0 70px}.foot{display:flex
 .container{width:calc(100% - 32px)}.links{display:none}.menu{display:block}.hero{min-height:730px}.heroContent{padding:110px 0 50px}.statsgrid{grid-template-columns:1fr}.stat{border:0;border-bottom:1px solid #484640;padding:12px}.stat:last-child{border:0}section{padding:78px 0}.aboutgrid,.approachgrid,.contactgrid{grid-template-columns:1fr;gap:35px}.aboutphoto{min-height:420px}.featuregrid{grid-template-columns:1fr}.feature{border-right:0!important;border-bottom:1px solid var(--line)!important}.feature:last-child{border-bottom:0!important}.courses{grid-template-columns:1fr}.course{min-height:350px}.gallery{grid-template-columns:1fr;grid-auto-rows:auto;gap:16px}.gitem,.gitem.big{grid-row:auto;height:auto;min-height:270px}.gitem img{height:270px}.caption{padding-top:45px}.reviewgrid{grid-template-columns:1fr}.contactbox,.mapbox{padding:30px}.mapbox{min-height:380px}.maparea{min-height:300px}.foot{flex-direction:column;align-items:flex-start}}
 @media(max-width:520px){h1{font-size:3.15rem;letter-spacing:-1.5px}.hero{min-height:690px}.hero p{font-size:.98rem}.btn{width:100%}.cards{grid-template-columns:1fr}.gitem,.gitem.big{min-height:0}.gitem img{height:250px}.contactbox h2{font-size:2.4rem}}
 
-/* Optional: ensure mobile overlay and close button are above page content */
+/* Mobile menu overlay — opaque panel, close button on top-right, no visual shift */
 .mobile {
   position: fixed;
-  inset: 0;               /* top:0; right:0; bottom:0; left:0; */
-  display: none;         /* shown only when .open is present */
+  inset: 0;                      /* top:0; right:0; bottom:0; left:0; */
+  display: none;                 /* shown only when .open is present */
   z-index: 1500;
-  background: rgba(0,0,0,0.4); /* dim background; adjust if you already have a style */
+  background: #ffffff;           /* opaque white so links are readable */
   -webkit-overflow-scrolling: touch;
+  padding-top: 64px;             /* leave space for the close button / header */
+  overflow-y: auto;
 }
-.mobile.open { display: block; }
+
+/* show when open (JS toggles this) */
+.mobile.open {
+  display: block;
+}
+
+/* Close button stays at top-right of the viewport */
 .mobile .close {
   position: absolute;
   top: 12px;
@@ -143,8 +151,26 @@ footer {background:var(--dark);color:#fff;padding:50px 0 70px}.foot{display:flex
   z-index: 1600;
   background: transparent;
   border: none;
-  font-size: 28px;
+  font-size: 34px;
+  line-height: 1;
   cursor: pointer;
+  color: var(--black);
+}
+
+/* Menu links: block layout, comfortable tap targets, divider like original */
+.mobile a {
+  display: block;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+  color: var(--black);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+/* If you previously locked page scroll in JS, keep that; this prevents background scrolling */
+html, body {
+  -webkit-tap-highlight-color: rgba(0,0,0,0); /* small touch polish */
 }
 
 </style>
@@ -351,7 +377,7 @@ footer {background:var(--dark);color:#fff;padding:50px 0 70px}.foot{display:flex
 
   .carousel-btn {
     position: absolute;
-    top: 50%;
+    top: 40%;
     transform: translateY(-50%);
     z-index: 5;
     background: rgba(29,28,25,0.15);
@@ -956,7 +982,79 @@ footer {background:var(--dark);color:#fff;padding:50px 0 70px}.foot{display:flex
 
 <script>
 
-const nav=document.getElementById("nav"),menu=document.getElementById("menu"),mobile=document.getElementById("mobile"),close=document.getElementById("close"); window.addEventListener("scroll",()=>nav.classList.toggle("scrolled",window.scrollY>50)); menu.onclick=()=>mobile.classList.add("open");close.onclick=()=>mobile.classList.remove("open"); mobile.querySelectorAll("a").forEach(a=>a.onclick=()=>mobile.classList.remove("open")); const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("show");io.unobserve(e.target)}}),{threshold:.1}); document.querySelectorAll(".reveal").forEach(e=>io.observe(e));
+/* Improved mobile menu handlers: reliable open/close, overlay click, Escape key, focus management */
+(function () {
+  const nav = document.getElementById("nav");
+  const menu = document.getElementById("menu");
+  const mobile = document.getElementById("mobile");
+  const closeBtn = document.getElementById("close");
+
+  if (!nav || !menu || !mobile || !closeBtn) return;
+
+  // Open menu
+  menu.addEventListener("click", (e) => {
+    e.preventDefault();
+    mobile.classList.add("open");
+    // prevent background scrolling while menu is open
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    // move focus to close button for accessibility
+    closeBtn.focus();
+  });
+
+  // Close menu
+  function closeMenu() {
+    mobile.classList.remove("open");
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+    // return focus to the menu button
+    menu.focus();
+  }
+
+  closeBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    closeMenu();
+  });
+
+  // Close when a link is clicked (existing behaviour)
+  mobile.querySelectorAll("a").forEach(a => {
+    a.addEventListener("click", () => {
+      closeMenu();
+    });
+  });
+
+  // Close if user clicks the overlay area (i.e. outside the inner panel)
+  // This assumes #mobile is the overlay element that fills the viewport.
+  mobile.addEventListener("click", (e) => {
+    if (e.target === mobile) {
+      // clicked the overlay, not an inner child
+      closeMenu();
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" || e.key === "Esc") {
+      if (mobile.classList.contains("open")) {
+        closeMenu();
+      }
+    }
+  });
+
+  // Keep nav style toggling on scroll
+  window.addEventListener("scroll", () => {
+    nav.classList.toggle("scrolled", window.scrollY > 50);
+  });
+
+  // IntersectionObserver for reveal elements (keep existing behaviour)
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add("show");
+      io.unobserve(e.target);
+    }
+  }), { threshold: .1 });
+  document.querySelectorAll(".reveal").forEach(e => io.observe(e));
+})();
 
 </script>
 </body>
