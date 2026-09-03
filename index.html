@@ -933,12 +933,81 @@ footer {background:var(--dark);color:#fff;padding:50px 0 70px}.foot{display:flex
 </div></footer>
 
 <script>
- const nav=document.getElementById("nav"),menu=document.getElementById("menu"),mobile=document.getElementById("mobile"),close=document.getElementById("close");
-window.addEventListener("scroll",()=>nav.classList.toggle("scrolled",window.scrollY>50));
-menu.onclick=()=>mobile.classList.add("open");close.onclick=()=>mobile.classList.remove("open");
-mobile.querySelectorAll("a").forEach(a=>a.onclick=()=>mobile.classList.remove("open"));
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("show");io.unobserve(e.target)}}),{threshold:.1});
-document.querySelectorAll(".reveal").forEach(e=>io.observe(e));
+
+/* Improved mobile menu handlers: reliable open/close, overlay click, Escape key, focus management */
+(function () {
+  const nav = document.getElementById("nav");
+  const menu = document.getElementById("menu");
+  const mobile = document.getElementById("mobile");
+  const closeBtn = document.getElementById("close");
+
+  if (!nav || !menu || !mobile || !closeBtn) return;
+
+  // Open menu
+  menu.addEventListener("click", (e) => {
+    e.preventDefault();
+    mobile.classList.add("open");
+    // prevent background scrolling while menu is open
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    // move focus to close button for accessibility
+    closeBtn.focus();
+  });
+
+  // Close menu
+  function closeMenu() {
+    mobile.classList.remove("open");
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+    // return focus to the menu button
+    menu.focus();
+  }
+
+  closeBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    closeMenu();
+  });
+
+  // Close when a link is clicked (existing behaviour)
+  mobile.querySelectorAll("a").forEach(a => {
+    a.addEventListener("click", () => {
+      closeMenu();
+    });
+  });
+
+  // Close if user clicks the overlay area (i.e. outside the inner panel)
+  // This assumes #mobile is the overlay element that fills the viewport.
+  mobile.addEventListener("click", (e) => {
+    if (e.target === mobile) {
+      // clicked the overlay, not an inner child
+      closeMenu();
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" || e.key === "Esc") {
+      if (mobile.classList.contains("open")) {
+        closeMenu();
+      }
+    }
+  });
+
+  // Keep nav style toggling on scroll
+  window.addEventListener("scroll", () => {
+    nav.classList.toggle("scrolled", window.scrollY > 50);
+  });
+
+  // IntersectionObserver for reveal elements (keep existing behaviour)
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add("show");
+      io.unobserve(e.target);
+    }
+  }), { threshold: .1 });
+  document.querySelectorAll(".reveal").forEach(e => io.observe(e));
+})();
+
 </script>
 </body>
 </html>
